@@ -25,3 +25,5 @@ hs_err_pid*
 .idea/**
 low-code-tools/.idea/**
 low-code-tools/target/**
+low-code-home/.idea/**
+low-code-home/node_modules/**
