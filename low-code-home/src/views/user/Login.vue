@@ -259,7 +259,7 @@ export default {
         })
       })
       */
-      this.$router.push({ path: '/' })
+      this.$router.push({ path: '/account/center' })
       // 延迟 1 秒显示欢迎信息
       setTimeout(() => {
         this.$notification.success({

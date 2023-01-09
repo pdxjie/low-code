@@ -1,6 +1,7 @@
 import router, { resetRouter } from './router'
 import store from './store'
 import storage from 'store'
+import { message } from 'ant-design-vue'
 import NProgress from 'nprogress' // progress bar
 import '@/components/NProgress/nprogress.less' // progress bar custom style
 import notification from 'ant-design-vue/es/notification'
@@ -10,7 +11,7 @@ import { i18nRender } from '@/locales'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const allowList = ['login', 'register', 'registerResult'] // no redirect allowList
+const allowList = ['login', 'register', 'registerResult', 'Workplace', 'BaseForm', 'BasicList'] // no redirect allowList
 const loginRoutePath = '/user/login'
 const defaultRoutePath = '/dashboard/workplace'
 
@@ -20,6 +21,7 @@ router.beforeEach((to, from, next) => {
   /* has token */
   const token = storage.get(ACCESS_TOKEN)
   if (token) {
+    console.log('没又群贤')
     if (to.path === loginRoutePath) {
       next({ path: defaultRoutePath })
       NProgress.done()
@@ -67,9 +69,15 @@ router.beforeEach((to, from, next) => {
   } else {
     if (allowList.includes(to.name)) {
       // 在免登录名单，直接进入
+      store.dispatch('StaticRoutes')
       next()
     } else {
-      next({ path: loginRoutePath, query: { redirect: to.fullPath } })
+      if (to.meta.permission[0] === 'admin') {
+        next({ path: '/exception/403' })
+      } else {
+        message.warning('请先登录')
+        next({ path: loginRoutePath, query: { redirect: to.fullPath } })
+      }
       NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
     }
   }

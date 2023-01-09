@@ -42,6 +42,16 @@ function hasRole(roles, route) {
   }
 }
 
+function filterConstantRouter (routerMap) {
+  const accessedRouters = routerMap.filter(route => {
+      if (route.children && route.children.length) {
+        route.children = filterConstantRouter(route.children)
+      }
+      return true
+  })
+  return accessedRouters
+}
+
 function filterAsyncRouter (routerMap, role) {
   const accessedRouters = routerMap.filter(route => {
     if (hasPermission(role.permissionList, route)) {
@@ -75,6 +85,11 @@ const permission = {
         commit('SET_ROUTERS', accessedRouters)
         resolve()
       })
+    },
+    StaticRoutes ({ commit }) {
+      const resultMap = cloneDeep(constantRouterMap)
+      const accessedRouters = filterConstantRouter(resultMap)
+      commit('SET_ROUTERS', accessedRouters)
     }
   }
 }
