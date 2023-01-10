@@ -23,12 +23,13 @@ public class DataBaseUtils {
 
     //获取数据库连接
     public static Connection getConnection(DataBase db) throws Exception {
+        String url = "jdbc:mysql://127.0.0.1:3306/book?useUnicode=true&characterEncoding=utf8";
         Properties props = new Properties();
         props.put("remarksReporting", "true");//获取数据库的备注信息
         props.put("user", db.getUserName());
         props.put("password", db.getPassWord());
         Class.forName(db.getDriver());//注册驱动
-        return DriverManager.getConnection(db.getUrl(), props);
+        return DriverManager.getConnection(url, props);
     }
 
 
@@ -61,7 +62,7 @@ public class DataBaseUtils {
         //获取元数据
         DatabaseMetaData metaData = connection.getMetaData();
         //获取当前数据库中的所有表
-        ResultSet tables = metaData.getTables(null, null, null, new String[]{"TABLE"});
+        ResultSet tables = metaData.getTables("book", null, null, new String[]{"TABLE"});
         //表集合
         List<Table> list = new ArrayList<>();
 
@@ -154,16 +155,20 @@ public class DataBaseUtils {
         String prefix = PropertiesUtils.customMap.get("tableRemovePrefixes");
         String temp = tableName;
         String[] split = prefix.split(",");
-        System.err.println(Arrays.toString(split));
         for (String pf : split) {
-            String substring = temp.substring(0, pf.length());
-            System.err.println(substring);
-            if (substring.equals(pf)) {
-                temp = StringUtils.removePrefix(temp, pf, true);
-                break;
-            }
+            temp = StringUtils.removePrefix(temp, pf, true);
         }
-        System.err.println(temp);
         return StringUtils.makeAllWordFirstLetterUpperCase(temp);
+    }
+
+    public static void main(String[] args) throws Exception {
+        DataBase dataBase = new DataBase("localhost","3306","book");
+        dataBase.setUserName("root");
+        dataBase.setPassWord("233031");
+
+        List<String> dbInfo = DataBaseUtils.getSchemas(dataBase);
+        for (String s : dbInfo) {
+            System.out.println(s);
+        }
     }
 }

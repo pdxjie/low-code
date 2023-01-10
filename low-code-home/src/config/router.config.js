@@ -16,6 +16,18 @@ export const asyncRouterMap = [
     redirect: '/account/center',
     children: [
       {
+        path: '/dashboard/workplace',
+        name: 'Workplace',
+        component: () => import('@/views/dashboard/Workplace'),
+        meta: { title: '代码生成', icon: 'code', keepAlive: true }
+      },
+      {
+        path: '/online/config',
+        name: 'Config',
+        component: () => import('@/views/list/BasicList'),
+        meta: { title: 'Online配置', icon: 'cloud-server', keepAlive: true }
+      },
+      {
         path: '/account/center',
         name: 'center',
         component: () => import('@/views/account/center'),
@@ -296,16 +308,10 @@ export const constantRouterMap = [
         meta: { title: '代码生成', icon: 'code', keepAlive: true }
       },
       {
-        path: '/form/base-form',
-        name: 'BaseForm',
-        component: () => import('@/views/form/basicForm'),
-        meta: { title: '示例广场', icon: 'global', keepAlive: true }
-      },
-      {
-        path: '/list/basic-list',
-        name: 'BasicList',
+        path: '/online/config',
+        name: 'Config',
         component: () => import('@/views/list/BasicList'),
-        meta: { title: 'menu.list.basic-list', icon: 'laptop', keepAlive: true }
+        meta: { title: 'Online配置', icon: 'cloud-server', keepAlive: true }
       },
       {
         path: '/exception',

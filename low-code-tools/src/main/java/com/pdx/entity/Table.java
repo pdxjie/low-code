@@ -1,6 +1,8 @@
 package com.pdx.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -10,6 +12,8 @@ import java.util.List;
  * @Description: 获取数据库中表的信息
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Table {
     /**
      *表名称

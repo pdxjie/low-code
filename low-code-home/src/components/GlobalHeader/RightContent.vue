@@ -1,19 +1,23 @@
 <template>
   <div :class="wrpCls">
-    <avatar-dropdown :menu="showMenu" :current-user="currentUser" :class="prefixCls" />
-    <select-lang :class="prefixCls" />
+    <avatar-dropdown v-show="hasToken" :menu="showMenu" :current-user="currentUser" :class="prefixCls" />
+    <a-tooltip v-show="!hasToken" placement="bottom">
+      <template slot="title">
+        <span>登录享用更多功能</span>
+      </template>
+      <a-avatar @click="toLogin" style="margin-right: 20px" size="large" class="antd-pro-global-header-index-avatar" />
+    </a-tooltip>
+
   </div>
 </template>
 
 <script>
 import AvatarDropdown from './AvatarDropdown'
-import SelectLang from '@/components/SelectLang'
 
 export default {
   name: 'RightContent',
   components: {
-    AvatarDropdown,
-    SelectLang
+    AvatarDropdown
   },
   props: {
     prefixCls: {
@@ -45,6 +49,9 @@ export default {
         'ant-pro-global-header-index-right': true,
         [`ant-pro-global-header-index-${(this.isMobile || !this.topMenu) ? 'light' : this.theme}`]: true
       }
+    },
+    hasToken () {
+      return this.$store.getters.token
     }
   },
   mounted () {
@@ -53,6 +60,11 @@ export default {
         name: 'Serati Ma'
       }
     }, 1500)
+  },
+  methods: {
+    toLogin () {
+      this.$router.push({ name: 'login' })
+    }
   }
 }
 </script>
