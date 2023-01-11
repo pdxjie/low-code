@@ -1,5 +1,9 @@
 package com.pdx.utils;
 
+import com.pdx.entity.dto.FolderDto;
+import org.springframework.cglib.core.CollectionUtils;
+
+import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,5 +56,61 @@ public class FileUtils {
             result.getParentFile().mkdirs();
         }
         return result;
+    }
+
+    /**
+     * 获取本地文件目录
+     * @param path
+     * @return
+     */
+    public static List<FolderDto> folderDtos(String path) throws IOException {
+        List<FolderDto> fileName = new ArrayList<>();
+        if ("".equals(path) || "请选择代码生成目录".equals(path)){
+            FileSystemView fileSystemView = FileSystemView.getFileSystemView();
+
+            File[] listRoots = File.listRoots();
+            for (int i = 0; i < listRoots.length; i++) {
+                String name = fileSystemView.getSystemDisplayName(listRoots[i]).toString();
+                if (!name.isEmpty()){
+                    int begin = name.lastIndexOf("(");
+                    int end = name.lastIndexOf(")");
+                    name = name.substring(begin+1,end);
+                    FolderDto folderDto = new FolderDto();
+                    folderDto.setValue(name);
+                    folderDto.setLabel(name);
+                    folderDto.setIsLeaf(false);
+                    folderDto.setChildren(folderDtos(name));
+                    fileName.add(folderDto);
+                }
+            }
+        }else {
+            //获取指定目录下一级的所有文件夹
+            String dirName= path;
+            File file = new File(dirName);
+            String[] list1 = file.list();
+            File[] files = file.listFiles();
+            if(file.isDirectory() && !(file.list() == null) && file.list().length >0) {
+                String[] list = file.list();
+                for(int i=0;i<list.length;i++) {
+                    File file2 = new File(dirName+"\\"+list[i]);
+                    String path2 = file2.getPath();
+                    if (path2.split("\\\\").length>2){
+                        break;
+                    }
+                    if(file2.isDirectory()) {
+                        FolderDto folderDto = new FolderDto();
+                        folderDto.setValue(list[i]);
+                        folderDto.setLabel(list[i]);
+                        folderDto.setIsLeaf(true);
+                        folderDto.setChildren(folderDtos(path2));
+                        fileName.add(folderDto);
+                    }
+                }
+            }
+//            else {
+//
+//            }
+        }
+        return fileName;
     }
 }

@@ -31,7 +31,7 @@ export const asyncRouterMap = [
         path: '/account/center',
         name: 'center',
         component: () => import('@/views/account/center'),
-        meta: { title: 'menu.account.center', keepAlive: true, permission: ['user'] }
+        meta: { title: '个人中心', keepAlive: true, permission: ['user'] }
       }
       // {
       //   path: '/dashboard',
@@ -345,7 +345,7 @@ export const constantRouterMap = [
         path: '/account/center',
         name: 'center',
         component: () => import('@/views/account/center'),
-        meta: { title: 'menu.account.center', icon: 'user', keepAlive: true, permission: ['user'] }
+        meta: { title: '个人中心', icon: 'user', keepAlive: true, permission: ['user'] }
       },
       {
         path: '/data/manage',

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-
+import database from '@/store/modules/database'
 import app from './modules/app'
 import user from './modules/user'
 
@@ -20,7 +20,8 @@ export default new Vuex.Store({
   modules: {
     app,
     user,
-    permission
+    permission,
+    database
   },
   state: {},
   mutations: {},

@@ -66,3 +66,23 @@ export const databaseColumns = [
     scopedSlots: { customRender: 'isNull' }
   }
 ]
+
+export const tableColumns = [
+  {
+    title: '#',
+    dataIndex: 'key',
+    key: 'key',
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
+  },
+  {
+    title: '表名',
+    dataIndex: 'tableName',
+    align: 'center'
+  },
+  {
+    title: '表描述',
+    dataIndex: 'desc',
+    align: 'center'
+  }
+]

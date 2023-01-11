@@ -93,16 +93,6 @@ const vueConfig = {
 			.oneOf('svg_as_regular')
 				.merge(svgRule.toConfig())
 				.end()
-
-    // en_US: If prod is on assets require on cdn
-    // zh_CN: 如果是 prod 模式，则引入 CDN 依赖文件，有需要减少包大小请自行解除依赖
-    //
-    // if (isProd) {
-    //   config.plugin('html').tap(args => {
-    //     args[0].cdn = assetsCDN
-    //     return args
-    //   })
-    // }
   },
 
   css: {
@@ -122,16 +112,14 @@ const vueConfig = {
   },
 
   devServer: {
-    // development server port 8000
-    port: 8000
-    // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
-    // proxy: {
-    //   '/api': {
-    //     target: 'https://mock.ihx.me/mock/5baf3052f7da7e07e04a5116/antd-pro',
-    //     ws: false,
-    //     changeOrigin: true
-    //   }
-    // }
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: { '^/api': '' }
+      }
+    }
   },
 
   // disable source map in production

@@ -5,8 +5,13 @@
     </a-card>
     <a-card class="data-container">
       <div class="operation">
-        <a-button icon="plus" type="primary">新增</a-button>
-        <a-select default-value="请选择数据库" style="width: 120px" @change="handleChangeDatabase">
+        <a-button @click="handlePlus" icon="plus" type="primary">新增</a-button>
+        <a-select allowClear default-value="请选择数据源" style="width: 130px" @change="handleChangeDatabase">
+          <a-select-option v-for="(item,index) in dataSource" :key="index" :value="item">
+            {{ item }}
+          </a-select-option>
+        </a-select>
+        <a-select allowClear default-value="请选择数据库" style="width: 130px" @change="handleChangeDatabase">
           <a-select-option v-for="(item,index) in databases" :key="index" :value="item">
             {{ item }}
           </a-select-option>
@@ -36,12 +41,25 @@
         closable
         :style="{maxWidth:'100vw',paddingBottom:'0'}"
         width="100vw"
-        :visible="columnVisible"
+        :visible="columnEditVisible"
         :dialog-style="{ top: '0px'}"
         @ok="handleOk"
-        @cancel="()=>columnVisible = false"
+        @cancel="()=>columnEditVisible = false"
       >
-        <ConfigForm ref="configFormRef"/>
+        <ConfigFormEdit ref="configEditFormRef"/>
+      </a-modal>
+
+      <a-modal
+        title="编辑"
+        closable
+        :style="{maxWidth:'100vw',paddingBottom:'0'}"
+        width="100vw"
+        :visible="columnPlusVisible"
+        :dialog-style="{ top: '0px'}"
+        @ok="handlePlusOk"
+        @cancel="()=>columnPlusVisible = false"
+      >
+        <ConfigFormPlus :columnPlusVisible="columnPlusVisible" ref="configPlusFormRef"/>
       </a-modal>
     </a-card>
   </div>
@@ -50,15 +68,18 @@
 <script>
 import { tableColumn } from '@/utils/columns'
 import SearchForm from '@/views/list/SearchForm'
-import ConfigForm from '@/views/list/ConfigForm'
+import ConfigFormEdit from '@/views/list/ConfigFormEdit'
+import ConfigFormPlus from '@/views/list/ConfigFormPlus'
 export default {
   name: 'StandardList',
-  components: { ConfigForm, SearchForm },
+  components: { ConfigFormPlus, ConfigFormEdit, SearchForm },
   data () {
     return {
       tableColumn,
-      columnVisible: false,
+      columnEditVisible: false,
+      columnPlusVisible: false,
       selectedRowKeys: [],
+      dataSource: ['博客系统', '人力资源系统'],
       databases: ['book', 'blog', 'jeecg', 'ihrm'],
       data: [
         {
@@ -72,10 +93,16 @@ export default {
   },
   methods: {
     configSetting () {
-      this.columnVisible = true
+      this.columnEditVisible = true
     },
     handleOk () {
-      console.log(this.$refs.configFormRef.databaseTable)
+      console.log(this.$refs.configEditFormRef.databaseTable)
+    },
+    handlePlusOk () {
+      this.columnPlusVisible = false
+    },
+    handlePlus () {
+      this.columnPlusVisible = true
     },
     onSelectChange (keys) {
       this.selectedRowKeys = keys
@@ -95,7 +122,7 @@ export default {
   .data-container {
     margin-top: 10px;
     .operation {
-      width: 230px;
+      width: 430px;
       display: flex;
       justify-content: space-between;
       margin-bottom: 10px;
