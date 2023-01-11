@@ -1,17 +1,12 @@
 package com.pdx.utils;
 
-import com.pdx.entity.Column;
-import com.pdx.entity.DataBase;
-import com.pdx.entity.Table;
+import com.pdx.entity.*;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @Author: 派大星
@@ -21,14 +16,42 @@ import java.util.Properties;
 public class DataBaseUtils {
     //获取到mysql中所有的数据库名称
 
+    public static Map<String,Object> customMap;
+
+    static {
+        customMap = new HashMap<>();
+        customMap.put("VARCHAR","String");
+        customMap.put("BIGINT","Long");
+        customMap.put("INTEGER","Integer");
+        customMap.put("INT","Integer");
+        customMap.put("DATE","java.util.Date");
+        customMap.put("DATETIME","java.util.Date");
+        customMap.put("TIMESTAMP","java.util.Date");
+        customMap.put("DOUBLE","Double");
+        customMap.put("TEXT","String");
+        customMap.put("VARCHAR2","String");
+        customMap.put("NVARCHAR2","String");
+        customMap.put("CHAR","String");
+        customMap.put("MEDIUMTEXT","String");
+        customMap.put("TINYINT","Integer");
+        customMap.put("LONGTEXT","String");
+        customMap.put("BIT","Integer");
+        customMap.put("MEDIUMINT","Integer");
+        customMap.put("SMALLINT","Integer");
+        customMap.put("tableRemovePrefixes","");
+
+
+    }
+
+
     //获取数据库连接
-    public static Connection getConnection(DataBase db) throws Exception {
-        String url = "jdbc:mysql://127.0.0.1:3306/book?useUnicode=true&characterEncoding=utf8";
+    public static Connection getConnection(ConfigurationInfo configurationInfo) throws Exception {
+        String url = String.format("jdbc:mysql://%s:%s?useUnicode=true&characterEncoding=utf8", configurationInfo.getIp(), configurationInfo.getPort());
         Properties props = new Properties();
         props.put("remarksReporting", "true");//获取数据库的备注信息
-        props.put("user", db.getUserName());
-        props.put("password", db.getPassWord());
-        Class.forName(db.getDriver());//注册驱动
+        props.put("user", configurationInfo.getLoginName());
+        props.put("password", configurationInfo.getPassword());
+        Class.forName(configurationInfo.getDriver());//注册驱动
         return DriverManager.getConnection(url, props);
     }
 
@@ -38,7 +61,7 @@ public class DataBaseUtils {
      *
      * @param db 连接数据库的信息
      */
-    public static List<String> getSchemas(DataBase db) throws Exception {
+    public static List<String> getSchemas(ConfigurationInfo db) throws Exception {
         //获取元数据
         Connection connection = getConnection(db);
         DatabaseMetaData metaData = connection.getMetaData();
@@ -54,9 +77,35 @@ public class DataBaseUtils {
     }
 
     /**
+     * 获取Table信息
+     * @param db
+     * @param tableName
+     * @return
+     * @throws Exception
+     */
+    public static List<TableInfo> getTableInfo(ConfigurationInfo db,String tableName)throws Exception {
+        //获取连接
+        List<TableInfo> tableInfos = new ArrayList<>();
+        Connection connection = getConnection(db);
+        DatabaseMetaData metaData = connection.getMetaData();
+        ResultSet tables = metaData.getTables(tableName, "", null, new String[]{"TABLE"});
+        while (tables.next()) {
+            TableInfo tableInfo = new TableInfo();
+            tableInfo.setTableName(tables.getString("TABLE_NAME"));
+            tableInfo.setTableCat(tables.getString("TABLE_CAT"));
+            tableInfo.setTableType(tables.getString("TABLE_TYPE"));
+            tableInfo.setRemark(tables.getString("REMARKS"));
+            tableInfos.add(tableInfo);
+        }
+        tables.close();
+        connection.close();
+        return tableInfos;
+    }
+
+    /**
      * 获取数据库中的表和字段构造实体类
      */
-    public static List<Table> getDbInfo(DataBase db) throws Exception {
+    public static List<Table> getDbInfo(ConfigurationInfo db) throws Exception {
         //获取连接
         Connection connection = getConnection(db);
         //获取元数据
@@ -119,7 +168,8 @@ public class DataBaseUtils {
                     dbType = "INTEGER";
                 }
                 cn.setColumnDbType(dbType);
-                String javaType = PropertiesUtils.customMap.get(dbType);
+                //String javaType = PropertiesUtils.customMap.get(dbType);
+                String javaType = customMap.get(dbType).toString();
                 cn.setColumnType(javaType);
                 //获取列备注
                 String columnRemark = columns.getString("REMARKS");//VARCHAR,DATETIME
@@ -152,7 +202,7 @@ public class DataBaseUtils {
      */
     public static String removePrefix(String tableName) {
         //获取配置文件的去除前缀的东西
-        String prefix = PropertiesUtils.customMap.get("tableRemovePrefixes");
+        String prefix = customMap.get("tableRemovePrefixes").toString();
         String temp = tableName;
         String[] split = prefix.split(",");
         for (String pf : split) {
@@ -162,13 +212,14 @@ public class DataBaseUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        DataBase dataBase = new DataBase("localhost","3306","book");
-        dataBase.setUserName("root");
-        dataBase.setPassWord("233031");
-
-        List<String> dbInfo = DataBaseUtils.getSchemas(dataBase);
-        for (String s : dbInfo) {
-            System.out.println(s);
+        ConfigurationInfo dataBase = new ConfigurationInfo();
+        dataBase.setPassword("233031");
+        dataBase.setIp("127.0.0.1");
+        dataBase.setPort("3306");
+        dataBase.setLoginName("root");
+        List<Table> dbInfo = DataBaseUtils.getDbInfo(dataBase);
+        for (Table table : dbInfo) {
+            System.out.println(table);
         }
     }
 }

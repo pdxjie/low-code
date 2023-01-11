@@ -1,12 +1,25 @@
 <template>
   <div class="online-container">
-    <a-card>
-      <SearchForm/>
-    </a-card>
+    <!--    <a-card>-->
+    <!--      <SearchForm/>-->
+    <!--    </a-card>-->
     <a-card class="data-container">
       <div class="operation">
         <a-button @click="handlePlus" icon="plus" type="primary">新增</a-button>
-        <a-select allowClear default-value="请选择数据源" style="width: 130px" @change="handleChangeDatabase">
+        <a-tooltip placement="top" v-if="!hasToken">
+          <template slot="title">
+            <span>登录后可配置数据源</span>
+          </template>
+          <a-select default-value="请选择数据源" :disabled="!hasToken" style="width: 130px">
+          </a-select>
+        </a-tooltip>
+        <a-select
+          v-if="hasToken"
+          allowClear
+          default-value="请选择数据源"
+          :disabled="hasToken"
+          style="width: 130px"
+          @change="handleChangeDatabase">
           <a-select-option v-for="(item,index) in dataSource" :key="index" :value="item">
             {{ item }}
           </a-select-option>
@@ -59,17 +72,19 @@
         @ok="handlePlusOk"
         @cancel="()=>columnPlusVisible = false"
       >
-        <ConfigFormPlus :columnPlusVisible="columnPlusVisible" ref="configPlusFormRef"/>
+        <ConfigFormPlus :tableName="tableName" :columnPlusVisible="columnPlusVisible" ref="configPlusFormRef"/>
       </a-modal>
     </a-card>
   </div>
 </template>
 
 <script>
+import { message } from 'ant-design-vue'
 import { tableColumn } from '@/utils/columns'
 import SearchForm from '@/views/list/SearchForm'
 import ConfigFormEdit from '@/views/list/ConfigFormEdit'
 import ConfigFormPlus from '@/views/list/ConfigFormPlus'
+import { TableInfos } from '@/api/database'
 export default {
   name: 'StandardList',
   components: { ConfigFormPlus, ConfigFormEdit, SearchForm },
@@ -80,18 +95,23 @@ export default {
       columnPlusVisible: false,
       selectedRowKeys: [],
       dataSource: ['博客系统', '人力资源系统'],
-      databases: ['book', 'blog', 'jeecg', 'ihrm'],
-      data: [
-        {
-          tableName: 'user',
-          desc: '用户表',
-          version: 1,
-          status: 1
-        }
-      ]
+      databases: [],
+      tableName: '',
+      data: []
+    }
+  },
+  mounted () {
+    this.allTables()
+  },
+  computed: {
+    hasToken () {
+      return this.$store.getters.token
     }
   },
   methods: {
+    allTables () {
+      this.databases = JSON.parse(this.$store.state.database.tables)
+    },
     configSetting () {
       this.columnEditVisible = true
     },
@@ -102,16 +122,26 @@ export default {
       this.columnPlusVisible = false
     },
     handlePlus () {
-      this.columnPlusVisible = true
+      if (this.tableName.trim() === '') {
+        message.warning('请选择数据库')
+      } else {
+        this.columnPlusVisible = true
+      }
     },
     onSelectChange (keys) {
       this.selectedRowKeys = keys
     },
-    handleChangeDatabase () {
-
+    async handleChangeDatabase (val) {
+      console.log(val)
+      const dataSource = this.$store.state.database.dataSource
+      const params = {
+        config: dataSource,
+        tableName: val
+      }
+      const { data: { result } } = await TableInfos(params)
+      this.data = result
     }
   }
-
 }
 </script>
 

@@ -1,5 +1,6 @@
 package com.pdx.core;
 
+import com.pdx.entity.ConfigurationInfo;
 import com.pdx.entity.Configures;
 import com.pdx.entity.DataBase;
 import com.pdx.entity.Table;
@@ -23,9 +24,9 @@ public class GeneratorFacade {
 
     private Configures configures;
 
-    private DataBase dataBase;
+    private ConfigurationInfo dataBase;
 
-    public GeneratorFacade(String templatePath, String outPath, Configures configures, DataBase dataBase) {
+    public GeneratorFacade(String templatePath, String outPath, Configures configures, ConfigurationInfo dataBase) {
         this.templatePath = templatePath;
         this.outPath = outPath;
         this.configures = configures;
@@ -54,7 +55,7 @@ public class GeneratorFacade {
      */
     private Map<String, Object> getDataModel(Table table) {
         Map<String,Object> dataModel = new HashMap<>();
-        dataModel.putAll(PropertiesUtils.customMap);
+        dataModel.putAll(DataBaseUtils.customMap);
         dataModel.put("table",table);
         dataModel.putAll(this.configures.getSettingMap());
         dataModel.put("ClassName",table.getName2());

@@ -1,8 +1,12 @@
 package com.pdx.utils;
 
+import com.alibaba.fastjson.JSONObject;
+import com.pdx.entity.ConfigurationInfo;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,25 +18,42 @@ import java.util.Properties;
  * @Description: Properties工具类
  */
 public class PropertiesUtils {
-
-    //自定义的数据模型map集合
-    public static Map<String,String> customMap = new HashMap<String,String>();
-
-    static {
-        File dir = new File("properties");
-        try {
-            //查询某个目录下的所有文件
-            List<File> files = FileUtils.searchAllFile(new File(dir.getAbsolutePath()));
-            for (File file : files) {
-                if(file.getName().endsWith(".properties")) {
-                    Properties prop = new Properties();
-                    prop.load(new FileInputStream(file));
-                    customMap.putAll((Map) prop);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    /***
+     * 加载全局配置
+     * @throws IOException 默认抛出IO异常
+     */
+    public static void loadProperties() throws IOException {
+        // 兼容Jar包外 处理配置文件
+        String filePath = System.getProperty("user.dir") + File.separator + "application.properties";
+        InputStream inStream;
+        if (new File(filePath).exists()) {
+            inStream = new FileInputStream(filePath);
+        } else {
+            inStream = PropertiesUtils.class.getClassLoader().getResourceAsStream("application.properties");
         }
+
+        Properties prop = new Properties();
+        prop.load(inStream);
+
+        // FastJson 构造对象
+        JSONObject json = new JSONObject();
+
+//        for (int i = 0; i < KEYS.length; i++) {
+//            String value = prop.getProperty(KEYS[i], VALUES[i]);
+//            json.put(KEYS[i], value);
+//        }
+
+//        ConfigurationInfo configurationInfo = json.toJavaObject(ConfigurationInfo.class);
+//        configurationInfo.setIncludeMap(parseInclude(configurationInfo.getInclude()));
+//        configurationInfo.setCustomHandleIncludeMap(parseInclude(configurationInfo.getCustomHandleInclude()));
+//
+//        // 解析项目目录地址
+//        String projectPath = configurationInfo.getRootPath() + File.separator + configurationInfo.getProjectName();
+//        configurationInfo.setProjectPath(projectPath);
+//
+//        GlobleConfig.setGlobleConfig(configurationInfo);
+
     }
+
 
 }

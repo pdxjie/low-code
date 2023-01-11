@@ -39,11 +39,11 @@
           :rowKey="(record)=>record.key"
           :columns="tableColumns"
           :data-source="tables"
-          :pagination="{ pageSize: 5 }"
+          :pagination="{ pageSize: 7 }"
           :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         />
         <!-- 操作区 -->
-        <a-button type="primary" @click="generatorCode">生成代码配置</a-button>
+        <a-button class="generator-code" type="primary" @click="generatorCode">生成代码配置</a-button>
         <!-- 数据源配置 -->
         <a-modal width="680px" v-model="ConfigDataSourceVisible" title="配置数据源" on-ok="handleOk">
           <template slot="footer">
@@ -77,6 +77,7 @@
 </template>
 
 <script>
+import { TableInfos } from '@/api/database'
 import { tableColumns } from '@/utils/columns'
 import { message } from 'ant-design-vue'
 import ConfigDataSource from '@/views/dashboard/ConfigDataSource'
@@ -97,37 +98,18 @@ export default {
       selectedRowKeys: [],
       options: [],
       filePath: '请选择代码生成目录',
-      tables: [
-        {
-          tableName: 'user',
-          desc: '用户表'
-        },
-        {
-          tableName: 'article',
-          desc: '文章表'
-        },
-        {
-          tableName: 'comment',
-          desc: '评论表'
-        },
-        {
-          tableName: 'like',
-          desc: '点赞表'
-        },
-        {
-          tableName: 'role',
-          desc: '角色表'
-        }
-      ]
+      tables: []
     }
   },
   computed: {
     hasToken () {
       return this.$store.getters.token
     }
+
   },
   mounted () {
     this.getFilesData()
+    this.allTables()
   },
   methods: {
     configDataSource () {
@@ -139,10 +121,31 @@ export default {
         this.options = res.folders
       })
     },
-    handleDataBaseChange () {},
+    async handleDataBaseChange (val) {
+      console.log(val)
+      const dataSource = this.$store.state.database.dataSource
+      console.log('@@', dataSource)
+      const params = {
+        config: dataSource,
+        tableName: val
+      }
+      const { data: { result } } = await TableInfos(params)
+      this.tables = result
+      console.log(result)
+    },
     // 保存数据源连接
-    handleOk () {
-      this.$store.dispatch('database/preservationConnect', this.$refs.checkOutConn.dataSourceConfig)
+    async handleOk () {
+      const result = await this.$store.dispatch('database/preservationConnect', this.$refs.checkOutConn.dataSourceConfig)
+      if (result) {
+        this.allTables()
+        this.ConfigDataSourceVisible = false
+      } else {
+        message.error('连接失败，请核查数据源信息')
+        this.ConfigDataSourceVisible = true
+      }
+    },
+    allTables () {
+      this.dataBases = JSON.parse(this.$store.state.database.tables)
     },
     /**
      * 测试连接数据源
@@ -177,6 +180,9 @@ export default {
       display: flex;
       justify-content: space-between;
       margin-bottom: 10px;
+    }
+    .generator-code {
+      margin-top: 10px;
     }
   }
 }

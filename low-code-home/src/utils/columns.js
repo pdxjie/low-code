@@ -1,23 +1,29 @@
 export const tableColumn = [
   {
+    title: '#',
+    dataIndex: 'key',
+    key: 'key',
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
+  },
+  {
     title: '表名',
     dataIndex: 'tableName',
     align: 'center'
   },
   {
     title: '表描述',
-    dataIndex: 'desc',
+    dataIndex: 'remark',
     align: 'center'
   },
   {
-    title: '版本',
-    dataIndex: 'version',
+    title: '所属数据库',
+    dataIndex: 'tableCat',
     align: 'center'
   },
   {
-    title: '更新状态',
-    dataIndex: 'status',
-    scopedSlots: { customRender: 'status' },
+    title: '表类型',
+    dataIndex: 'tableType',
     align: 'center'
   },
   {
@@ -82,7 +88,17 @@ export const tableColumns = [
   },
   {
     title: '表描述',
-    dataIndex: 'desc',
+    dataIndex: 'remark',
+    align: 'center'
+  },
+  {
+    title: '所属数据库',
+    dataIndex: 'tableCat',
+    align: 'center'
+  },
+  {
+    title: '表类型',
+    dataIndex: 'tableType',
     align: 'center'
   }
 ]
