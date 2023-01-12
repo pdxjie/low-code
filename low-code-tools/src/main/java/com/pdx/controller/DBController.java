@@ -1,22 +1,15 @@
 package com.pdx.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pdx.entity.ConfigurationInfo;
-import com.pdx.entity.Table;
-import com.pdx.entity.TableDetailInfo;
 import com.pdx.entity.TableInfo;
 import com.pdx.service.DBService;
-import com.pdx.utils.DBUtils;
 import com.pdx.utils.DataBaseUtils;
 import com.pdx.utils.Result;
+import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,12 +78,9 @@ public class DBController {
     public Result tableInfos(@RequestBody(required = false) JSONObject jsonObject){
         List<TableInfo> tableInfo = new ArrayList<>();
         try {
-            ConfigurationInfo configurationInfo = new ConfigurationInfo();
+            //ConfigurationInfo configurationInfo = new ConfigurationInfo();
             JSONObject paramObject = jsonObject.getJSONObject("config");
-            configurationInfo.setIp(paramObject.getString("ip"));
-            configurationInfo.setPort(paramObject.getString("port"));
-            configurationInfo.setLoginName(paramObject.getString("loginName"));
-            configurationInfo.setPassword(paramObject.getString("password"));
+            ConfigurationInfo configurationInfo = JSONObject.toJavaObject(paramObject, ConfigurationInfo.class);
             String tableName = jsonObject.getString("tableName");
             tableInfo = DataBaseUtils.getTableInfo(configurationInfo, tableName);
         }catch (Exception e){
@@ -108,12 +98,8 @@ public class DBController {
     public Result getTableDetailInfo(@RequestBody JSONObject jsonObject){
         TableInfo tableInfo = new TableInfo();
         try {
-            ConfigurationInfo configurationInfo = new ConfigurationInfo();
             JSONObject paramObject = jsonObject.getJSONObject("config");
-            configurationInfo.setIp(paramObject.getString("ip"));
-            configurationInfo.setPort(paramObject.getString("port"));
-            configurationInfo.setLoginName(paramObject.getString("loginName"));
-            configurationInfo.setPassword(paramObject.getString("password"));
+            ConfigurationInfo configurationInfo = JSONObject.toJavaObject(paramObject, ConfigurationInfo.class);
             String dbName = jsonObject.getString("dbName");
             String tableName = jsonObject.getString("tableName");
             tableInfo = DataBaseUtils.getTableDetailInfo(configurationInfo,dbName,tableName);
