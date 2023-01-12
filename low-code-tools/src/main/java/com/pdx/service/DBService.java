@@ -1,5 +1,7 @@
 package com.pdx.service;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.sql.Connection;
 import java.util.List;
 
@@ -12,4 +14,6 @@ public interface DBService {
 
 
     List<String> allTables(Connection connection);
+
+    Boolean createTable(JSONObject jsonObject);
 }

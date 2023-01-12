@@ -2,10 +2,7 @@ package com.pdx.utils;
 
 import com.pdx.entity.*;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -101,6 +98,90 @@ public class DataBaseUtils {
         connection.close();
         return tableInfos;
     }
+
+
+    /**
+     * 创建表数据
+     * @param configurationInfo
+     * @param dbName
+     * @param tableInfo
+     * @return
+     */
+    public static Boolean createTable(ConfigurationInfo configurationInfo,String dbName,TableInfo tableInfo) throws Exception{
+        List<TableDetailInfo> detailInfos = tableInfo.getDetailInfos();
+        Connection connection = getConnection(configurationInfo);
+        Statement stmt = null;
+        stmt = connection.createStatement();
+        //切换数据库
+        connection.setCatalog(dbName);
+        connection.getCatalog();
+        stmt.close();
+        //需要重新获取stmt
+        stmt = connection.createStatement();
+        //创建表
+        StringBuffer executeSql = new StringBuffer("create table "+tableInfo.getTableName()+" ( ");
+        for (TableDetailInfo detailInfo : detailInfos) {
+            StringBuffer fieldColumn = new StringBuffer();
+            fieldColumn.append(detailInfo.getField()).append(" ").append(detailInfo.getFieldType())
+                    .append("(").append(detailInfo.getFieldLength()).append(") ");
+            if (!detailInfo.getIsNull()){
+                fieldColumn.append("not null ");
+            }
+            if (detailInfo.getIsPrimaryKey() != null && detailInfo.getIsPrimaryKey()){
+                fieldColumn.append("primary key ");
+            }
+            fieldColumn.append("comment \'").append(detailInfo.getFieldComment()).append("\',");
+            executeSql.append(fieldColumn);
+        }
+        executeSql = new StringBuffer(executeSql.toString().substring(0, executeSql.length() - 1));
+        executeSql.append(")").append("ENGINE=InnoDB DEFAULT CHARSET=utf8 comment \'").append(tableInfo.getRemark()+"\'");
+
+        boolean execute = stmt.execute(executeSql.toString());
+        return !execute;
+    }
+
+
+    /**
+     * 查询表详细信息
+     * @return
+     */
+    public static TableInfo getTableDetailInfo(ConfigurationInfo db,String dbName,String tableName) throws Exception{
+        Connection connection = getConnection(db);
+        DatabaseMetaData metaData = connection.getMetaData();
+        ResultSet primaryKeys = metaData.getPrimaryKeys(null, "%", tableName);
+        String primaryKey = "";
+        while (primaryKeys.next()){
+            primaryKey = primaryKeys.getString("COLUMN_NAME");
+        }
+        TableInfo tableInfo = new TableInfo();
+        tableInfo.setTableName(tableName);
+        List<TableDetailInfo> tableDetailInfos = new ArrayList<>();
+        ResultSet columns = metaData.getColumns(dbName, null, tableName, null);
+        while (columns.next()){
+            TableDetailInfo tableDetailInfo = new TableDetailInfo();
+            tableDetailInfo.setField(columns.getString("COLUMN_NAME"));
+            tableDetailInfo.setFieldComment(columns.getString("REMARKS"));
+            tableDetailInfo.setFieldType(columns.getString("TYPE_NAME"));
+            tableDetailInfo.setFieldLength(Integer.valueOf(columns.getString("COLUMN_SIZE")));
+            if ("YES".equals(columns.getString("IS_NULLABLE"))){
+                tableDetailInfo.setIsNull(true);
+            }else {
+                tableDetailInfo.setIsNull(false);
+            }
+            if (columns.getString("COLUMN_NAME").equals(primaryKey)){
+                tableDetailInfo.setIsPrimaryKey(true);
+            }else {
+                tableDetailInfo.setIsPrimaryKey(false);
+            }
+            tableDetailInfos.add(tableDetailInfo);
+        }
+        tableInfo.setDetailInfos(tableDetailInfos);
+        columns.close();
+        connection.close();
+        primaryKeys.close();
+        return tableInfo;
+    }
+
 
     /**
      * 获取数据库中的表和字段构造实体类
