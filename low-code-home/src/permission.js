@@ -21,7 +21,6 @@ router.beforeEach((to, from, next) => {
   /* has token */
   const token = storage.get(ACCESS_TOKEN)
   if (token) {
-    console.log('没又群贤')
     if (to.path === loginRoutePath) {
       next({ path: defaultRoutePath })
       NProgress.done()

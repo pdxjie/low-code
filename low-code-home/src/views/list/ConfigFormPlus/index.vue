@@ -43,11 +43,12 @@
       <a-tabs default-active-key="1">
         <a-tab-pane key="1" tab="数据库配置">
           <a-button style="margin-bottom: 10px" icon="plus" type="primary" @click="handleAdd">新增</a-button>
+          <a-button style="margin-bottom: 10px" icon="delete" type="primary" @click="handleAdd">删除</a-button>
           <a-table
             :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-            :rowKey="(record,index)=>index"
-            :pagination="{ pageSize: 4 }"
-            :scroll="{ y: 440 }"
+            :rowKey="(record)=>record.key"
+            :pagination="{ pageSize: 200 }"
+            :scroll="{ y: 400 }"
             :columns="databaseColumns"
             :data-source="databaseTable.columnsData"
           >

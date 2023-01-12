@@ -10,70 +10,98 @@
             <a-avatar class="card-avatar" slot="avatar" :src="item.avatar" size="small"/>
             <div class="meta-cardInfo" slot="description">
               <div>
-                <p>活跃用户</p>
+                <p>连接次数</p>
                 <p>
-                  <span>{{ item.activeUser }}<span>万</span></span>
+                  <span>{{ item.activeUser }}</span>
                 </p>
               </div>
               <div>
-                <p>新增用户</p>
+                <p>数据库数量</p>
                 <p>{{ item.newUser | NumberFormat }}</p>
               </div>
             </div>
           </a-card-meta>
           <template class="ant-card-actions" slot="actions">
             <a>
-              <a-icon type="download"/>
+              <a-icon type="edit" @click="editDataSourceInfo"/>
             </a>
             <a>
-              <a-icon type="edit"/>
-            </a>
-            <a>
-              <a-icon type="share-alt"/>
-            </a>
-            <a>
-              <a-dropdown>
-                <a class="ant-dropdown-link" href="javascript:;">
-                  <a-icon type="ellipsis"/>
-                </a>
-                <a-menu slot="overlay">
-                  <a-menu-item>
-                    <a href="javascript:;">1st menu item</a>
-                  </a-menu-item>
-                  <a-menu-item>
-                    <a href="javascript:;">2nd menu item</a>
-                  </a-menu-item>
-                  <a-menu-item>
-                    <a href="javascript:;">3rd menu item</a>
-                  </a-menu-item>
-                </a-menu>
-              </a-dropdown>
+              <i class="iconfont icon-lianjie_" @click="checkOutConnect"></i>
             </a>
           </template>
         </a-card>
       </a-list-item>
     </a-list>
-
+    <a-modal v-model="editDataSourceVisible" title="修改数据源信息" @ok="openDataSourceConfigInfo">
+      <EditDataSourceConfigInfo/>
+    </a-modal>
   </div>
 </template>
 
 <script>
-const dataSource = []
-for (let i = 0; i < 11; i++) {
-  dataSource.push({
-    title: 'Alipay',
-    avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
-    activeUser: 17,
-    newUser: 1700
-  })
-}
-
+import { message } from 'ant-design-vue'
+import EditDataSourceConfigInfo from '@/views/account/center/EditDataSourceConfigInfo'
 export default {
   name: 'Article',
-  components: {},
+  components: { EditDataSourceConfigInfo },
   data () {
     return {
-      dataSource
+      dataSource: [
+        {
+          title: '人力资源',
+          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
+          activeUser: 71,
+          newUser: 8
+        },
+        {
+          title: '博客系统',
+          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
+          activeUser: 62,
+          newUser: 12
+        },
+        {
+          title: '低代码',
+          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
+          activeUser: 89,
+          newUser: 23
+        },
+        {
+          title: '图书管理系统',
+          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
+          activeUser: 25,
+          newUser: 11
+        },
+        {
+          title: '进销货系统',
+          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
+          activeUser: 11,
+          newUser: 6
+        },
+        {
+          title: 'RPM',
+          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
+          activeUser: 45,
+          newUser: 4
+        },
+        {
+          title: 'CSDN',
+          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
+          activeUser: 22,
+          newUser: 2
+        }
+      ],
+      editDataSourceVisible: false
+    }
+  },
+  methods: {
+    checkOutConnect () {
+      message.success('连接成功')
+    },
+    editDataSourceInfo () {
+      this.editDataSourceVisible = true
+    },
+    openDataSourceConfigInfo () {
+      this.editDataSourceVisible = false
     }
   }
 }
@@ -107,6 +135,11 @@ export default {
         }
 
       }
+    }
+    ::v-deep .ant-avatar-sm {
+      width: 40px;
+      height: 40px;
+      border-radius: 5px;
     }
   }
 

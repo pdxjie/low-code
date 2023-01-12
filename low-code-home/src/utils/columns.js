@@ -25,16 +25,18 @@ export const tableColumn = [
     title: '表类型',
     dataIndex: 'tableType',
     align: 'center'
-  },
-  {
-    title: '操作',
-    dataIndex: 'action',
-    scopedSlots: { customRender: 'action' },
-    align: 'center'
   }
 ]
 
 export const databaseColumns = [
+  {
+    title: '#',
+    dataIndex: 'key',
+    key: 'key',
+    align: 'center',
+    width: 50,
+    customRender: (text, record, index) => `${index + 1}`
+  },
   {
     title: '字段名称',
     dataIndex: 'field',

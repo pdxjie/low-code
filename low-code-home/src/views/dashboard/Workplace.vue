@@ -115,6 +115,7 @@ export default {
       immediate: true,
       handler (newVal, oldVal) {
         if (!newVal) {
+          console.log(newVal)
           this.tableNames = []
         }
       }
@@ -143,7 +144,7 @@ export default {
       })
     },
     async handleDataBaseChange (val) {
-      console.log(val)
+      this.selectedRowKeys = []
       const dataSource = this.$store.state.database.dataSource
       const params = {
         config: dataSource,

@@ -36,18 +36,6 @@
         :columns="tableColumn"
         :data-source="data"
       >
-        <template slot="status" slot-scope="text,record">
-          <span v-if="record.status === 1" style="color: #35c035">已更新</span>
-          <span v-else style="color: red">未更新</span>
-        </template>
-        <template slot="action" slot-scope="text,record">
-          <a-tooltip placement="topLeft">
-            <template slot="title">
-              <span>更新</span>
-            </template>
-            <a-button class="button-style" @click="configSetting(record)" type="primary" icon="edit"/>
-          </a-tooltip>
-        </template>
       </a-table>
       <a-modal
         title="编辑"
