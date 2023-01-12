@@ -39,7 +39,7 @@
           :rowKey="(record)=>record.key"
           :columns="tableColumns"
           :data-source="tables"
-          :pagination="{ pageSize: 7 }"
+          :pagination="{ pageSize: clientWidth > 2000 ? 12:8 }"
           :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         />
         <!-- 操作区 -->
@@ -69,9 +69,10 @@
               开始生成
             </a-button>
           </template>
-          <GeneratorCode :options="options" :generatorCodeVisible="generatorCodeVisible"/>
+          <GeneratorCode :tableNames="tableNames" :options="options" :generatorCodeVisible="generatorCodeVisible"/>
         </a-modal>
       </a-card>
+      <BackTop :visibilityHeight="200"/>
     </div>
   </div>
 </template>
@@ -79,17 +80,19 @@
 <script>
 import { TableInfos } from '@/api/database'
 import { tableColumns } from '@/utils/columns'
-import { message } from 'ant-design-vue'
+import { message, BackTop } from 'ant-design-vue'
 import ConfigDataSource from '@/views/dashboard/ConfigDataSource'
 import GeneratorCode from '@/views/dashboard/GeneratorCode'
 export default {
   name: 'Workplace',
   components: {
     GeneratorCode,
-    ConfigDataSource
+    ConfigDataSource,
+    BackTop
   },
   data () {
     return {
+      clientWidth: document.body.clientWidth,
       ConfigDataSourceVisible: false,
       generatorCodeVisible: false,
       endFrames: ['MyBatis-Plus', 'Mybatis'],
@@ -98,18 +101,36 @@ export default {
       selectedRowKeys: [],
       options: [],
       filePath: '请选择代码生成目录',
-      tables: []
+      tables: [],
+      tableNames: []
     }
   },
   computed: {
     hasToken () {
       return this.$store.getters.token
     }
-
+  },
+  watch: {
+    generatorCodeVisible: {
+      immediate: true,
+      handler (newVal, oldVal) {
+        if (!newVal) {
+          this.tableNames = []
+        }
+      }
+    }
   },
   mounted () {
     this.getFilesData()
     this.allTables()
+    const that = this
+    window.onresize = () => {
+      return (() => {
+        window.clientWidth = document.body.clientWidth
+        that.clientWidth = window.clientWidth
+      })()
+    }
+    console.log(this.clientWidth)
   },
   methods: {
     configDataSource () {
@@ -124,7 +145,6 @@ export default {
     async handleDataBaseChange (val) {
       console.log(val)
       const dataSource = this.$store.state.database.dataSource
-      console.log('@@', dataSource)
       const params = {
         config: dataSource,
         tableName: val
@@ -134,18 +154,22 @@ export default {
       console.log(result)
     },
     // 保存数据源连接
-    async handleOk () {
-      const result = await this.$store.dispatch('database/preservationConnect', this.$refs.checkOutConn.dataSourceConfig)
-      if (result) {
-        this.allTables()
-        this.ConfigDataSourceVisible = false
-      } else {
-        message.error('连接失败，请核查数据源信息')
-        this.ConfigDataSourceVisible = true
-      }
+    handleOk () {
+      this.$store.dispatch('database/preservationConnect', this.$refs.checkOutConn.dataSourceConfig).then(res => {
+        this.loading = true
+        if (res) {
+          this.allTables()
+          console.log('@@', this.dataBases)
+          this.ConfigDataSourceVisible = false
+        } else {
+          message.error('连接失败，请核查数据源信息')
+          this.ConfigDataSourceVisible = true
+        }
+      })
     },
+    // 获取所有的表数据
     allTables () {
-      this.dataBases = JSON.parse(this.$store.state.database.tables)
+      this.dataBases = this.$store.getters.tables
     },
     /**
      * 测试连接数据源
@@ -158,7 +182,19 @@ export default {
       this.selectedRowKeys = selectedRowKeys
     },
     generatorCode () {
-      this.generatorCodeVisible = true
+      if (this.selectedRowKeys.length <= 0) {
+        message.warning('请选择需要生成代码的表')
+      } else {
+        const names = this.tables.filter((item, index) => {
+          if (this.selectedRowKeys.includes(index)) {
+            return item.tableName
+          }
+        })
+        names.forEach(item => {
+          this.tableNames.push(item.tableName)
+        })
+        this.generatorCodeVisible = true
+      }
     },
     generatorCodeOk () {
       message.success('代码生成成功')

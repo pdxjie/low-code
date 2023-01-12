@@ -350,6 +350,7 @@ export const constantRouterMap = [
       {
         path: '/data/manage',
         name: 'manage',
+        component: () => import('@/views/Manage'),
         meta: { title: '后台运维', icon: 'pull-request', permission: ['admin'] }
       }
     ]

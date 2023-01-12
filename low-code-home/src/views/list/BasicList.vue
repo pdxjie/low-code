@@ -31,7 +31,7 @@
         </a-select>
       </div>
       <a-table
-        :pagination="{ pageSize: 6 }"
+        :pagination="{ pageSize: clientWidth > 2000 ? 12:8 }"
         :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         :columns="tableColumn"
         :data-source="data"
@@ -40,12 +40,12 @@
           <span v-if="record.status === 1" style="color: #35c035">已更新</span>
           <span v-else style="color: red">未更新</span>
         </template>
-        <template slot="action">
+        <template slot="action" slot-scope="text,record">
           <a-tooltip placement="topLeft">
             <template slot="title">
               <span>更新</span>
             </template>
-            <a-button class="button-style" @click="configSetting" type="primary" icon="edit"/>
+            <a-button class="button-style" @click="configSetting(record)" type="primary" icon="edit"/>
           </a-tooltip>
         </template>
       </a-table>
@@ -55,53 +55,68 @@
         :style="{maxWidth:'100vw',paddingBottom:'0'}"
         width="100vw"
         :visible="columnEditVisible"
-        :dialog-style="{ top: '0px'}"
+        :dialog-style="{ top: '0px',position:'fixed'}"
         @ok="handleOk"
         @cancel="()=>columnEditVisible = false"
       >
-        <ConfigFormEdit ref="configEditFormRef"/>
+        <ConfigFormEdit :tableName="tableName" :tableDetailData="tableDetailData" ref="configEditFormRef"/>
       </a-modal>
 
       <a-modal
-        title="编辑"
+        title="新增"
         closable
         :style="{maxWidth:'100vw',paddingBottom:'0'}"
         width="100vw"
         :visible="columnPlusVisible"
-        :dialog-style="{ top: '0px'}"
+        :dialog-style="{ top: '0px',position:'fixed'}"
         @ok="handlePlusOk"
         @cancel="()=>columnPlusVisible = false"
       >
         <ConfigFormPlus :tableName="tableName" :columnPlusVisible="columnPlusVisible" ref="configPlusFormRef"/>
       </a-modal>
     </a-card>
+    <BackTop :visibilityHeight="200"/>
   </div>
 </template>
 
 <script>
-import { message } from 'ant-design-vue'
+import { message, BackTop } from 'ant-design-vue'
 import { tableColumn } from '@/utils/columns'
 import SearchForm from '@/views/list/SearchForm'
 import ConfigFormEdit from '@/views/list/ConfigFormEdit'
 import ConfigFormPlus from '@/views/list/ConfigFormPlus'
-import { TableInfos } from '@/api/database'
+import { TableInfos, TableDetailInfo, CreateTable } from '@/api/database'
 export default {
   name: 'StandardList',
-  components: { ConfigFormPlus, ConfigFormEdit, SearchForm },
+  components: { ConfigFormPlus, ConfigFormEdit, SearchForm, BackTop },
   data () {
     return {
+      clientWidth: document.body.clientWidth,
       tableColumn,
       columnEditVisible: false,
       columnPlusVisible: false,
       selectedRowKeys: [],
       dataSource: ['博客系统', '人力资源系统'],
       databases: [],
+      tableDetailData: {},
       tableName: '',
       data: []
     }
   },
   mounted () {
     this.allTables()
+    const that = this
+    window.onresize = () => {
+      return (() => {
+        window.clientWidth = document.body.clientWidth
+        that.clientWidth = window.clientWidth
+      })()
+    }
+  },
+  watch: {
+    clientWidth (newVal, oldVal) {
+      console.log(newVal)// 浏览器窗口变化时，打印宽度。
+    }
   },
   computed: {
     hasToken () {
@@ -110,16 +125,42 @@ export default {
   },
   methods: {
     allTables () {
-      this.databases = JSON.parse(this.$store.state.database.tables)
+      this.databases = this.$store.state.database.tables
     },
-    configSetting () {
+    async configSetting (record) {
+      const dataSource = this.$store.state.database.dataSource
+      const params = {
+        config: dataSource,
+        dbName: this.tableName,
+        tableName: record.tableName
+      }
+      const { data: { result } } = await TableDetailInfo(params)
+      result.remark = record.remark
+      this.tableDetailData = result
       this.columnEditVisible = true
     },
     handleOk () {
       console.log(this.$refs.configEditFormRef.databaseTable)
     },
-    handlePlusOk () {
-      this.columnPlusVisible = false
+    async handlePlusOk () {
+      if (this.$refs.configPlusFormRef.databaseTable.tableName === '') {
+        message.error('表名不能为空')
+      } else {
+        const dataSource = this.$store.state.database.dataSource
+        const tableData = this.$refs.configPlusFormRef.databaseTable
+        const parmas = {
+          config: dataSource,
+          dbName: this.tableName,
+          tableDetailData: JSON.stringify(tableData)
+        }
+        const { data: { result } } = await CreateTable(parmas)
+        if (result) {
+          message.success('新增成功')
+          this.columnPlusVisible = false
+        } else {
+          message.error('该表结构目前已存在')
+        }
+      }
     },
     handlePlus () {
       if (this.tableName.trim() === '') {
@@ -132,7 +173,7 @@ export default {
       this.selectedRowKeys = keys
     },
     async handleChangeDatabase (val) {
-      console.log(val)
+      this.tableName = val
       const dataSource = this.$store.state.database.dataSource
       const params = {
         config: dataSource,
@@ -150,6 +191,7 @@ export default {
   width: 100%;
   height: 100vh;
   .data-container {
+    height: 100%;
     margin-top: 10px;
     .operation {
       width: 430px;

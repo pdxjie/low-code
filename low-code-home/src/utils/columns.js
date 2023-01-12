@@ -61,9 +61,9 @@ export const databaseColumns = [
   },
   {
     title: '主键',
-    dataIndex: 'primaryKey',
+    dataIndex: 'isPrimaryKey',
     align: 'center',
-    scopedSlots: { customRender: 'primaryKey' }
+    scopedSlots: { customRender: 'isPrimaryKey' }
   },
   {
     title: '允许空值',
