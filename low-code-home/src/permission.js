@@ -71,12 +71,11 @@ router.beforeEach((to, from, next) => {
       store.dispatch('StaticRoutes')
       next()
     } else {
-      if (to.meta.permission[0] === 'admin') {
-        next({ path: '/exception/403' })
-      } else {
+      // if (to.meta.permission[0] === 'admin') {
+      //   next({ path: '/exception/403' })
+      // } else {
         message.warning('请先登录')
         next({ path: loginRoutePath, query: { redirect: to.fullPath } })
-      }
       NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
     }
   }

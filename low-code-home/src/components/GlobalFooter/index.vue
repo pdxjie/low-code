@@ -12,7 +12,7 @@
       <a-tooltip placement="top">
         <template slot="title">
           <span>
-            <img src="" class="weichat" alt="">
+            <img :src="wechatImgUrl" class="weichat" alt="">
           </span>
         </template>
         <a-icon type="message" />
@@ -43,6 +43,11 @@ export default {
   name: 'ProGlobalFooter',
   components: {
     GlobalFooter
+  },
+  data () {
+    return {
+      wechatImgUrl: require('@/assets/wechat/wechat.jpg')
+    }
   }
 }
 </script>
