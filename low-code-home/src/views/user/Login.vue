@@ -31,7 +31,6 @@
 <script>
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
-
 export default {
   data () {
     return {
@@ -45,7 +44,6 @@ export default {
       this.loadCode = false
       clearTimeout(timer)
     }, 2000)
-
     // 轮询后台，看用户是否扫码成功
     this.loopFun()
   },
@@ -66,7 +64,6 @@ export default {
         this.wechatLoginImgUrl = `https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=${res.ticket}`
       })
     },
-
     // 扫码登录操作
     sleep (dealy) {
       // eslint-disable-next-line promise/param-names
