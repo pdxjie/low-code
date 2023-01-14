@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.pdx.utils.ParseXml;
 import com.pdx.utils.ParseXmlForWx;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.bind.annotation.*;
@@ -30,30 +32,28 @@ import java.util.Map;
 public class WeChatController {
     // 记录所有登录人的状态
     Map<String, Boolean> loginObj = new HashMap<String, Boolean>();
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     // 公众号数据
     // 以下四个变量，是你需要改成你自己的
-    @Value("${wx.appid}")
-    private String appId;
-    @Value("${wx.appsecret}")
-    private String appsecret;
-    @Value("${wx.token}")
-    private String token;
+    private String appid ="wxf09907a64ae8fa3a";
+    private String appsecret="2820c2f2dfbae0602803a0c845887e05";
+    private String token = "generatorCode";
 
     // 请求得到的access_token
     JSONObject access_token_obj=null;
 
-    @GetMapping("/")
+    @GetMapping("/wx/callback")
     public String kk(HttpServletRequest req){
         String signature = req.getParameter("signature");
         String echostr = req.getParameter("echostr");
-        System.out.println("进来了----: "+signature);
         String str = this.getValidateStr(req);
         if (str.equals(signature)) {
-            System.out.println("验证通过-2--");
             // res.send(true)
             return echostr;
         } else {
-            System.out.println("验证不通过-1--");
             return "fail";
         }
     }
@@ -65,14 +65,10 @@ public class WeChatController {
         String arr[] = { token, timestamp, nonce };
         // let arr = [token, timestamp, nonce];
         Arrays.sort(arr);
-
         String arrStr = String.join("", arr);
-        System.out.println("排序后: "+arrStr);
-
         // 然后通过sha1加密
         // const relStr = sha1(arrStr);
         String sign = this.sha1_encode(arrStr);
-        System.out.println("sha1加密后sign: "+sign);
         return sign;
     }
 
@@ -120,16 +116,13 @@ public class WeChatController {
 
         // 1.根据前端，或者微信服务器返回来的code，去请求access_token
         String uri = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&"
-                +"appid="+appId
+                +"appid="+appid
                 +"&secret="+appsecret;
 
-        System.out.println("uri:"+uri);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/json;charset=UTF-8"));
         HttpEntity<String> entity = new HttpEntity<String>(headers);
         ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
-        System.out.println(response);
-        System.out.println(response.getBody());
         JSONObject obj = JSON.parseObject(response.getBody());
 
         // 将access_token存储在内存里，备用
@@ -138,7 +131,6 @@ public class WeChatController {
         Long now = new Date().getTime();
         obj.put("lastTime", now);
         this.access_token_obj = obj;
-        System.out.println("obj"+obj);
     }
 
     // 获取ticket
@@ -150,9 +142,6 @@ public class WeChatController {
         String access_token = this.access_token_obj.getString("access_token");
         String uri = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token="
                 +access_token;
-
-        System.out.println("ticket-uri:"+uri);
-
         //请求头-法2
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getMessageConverters().set(1,new StringHttpMessageConverter(StandardCharsets.UTF_8));
@@ -168,14 +157,9 @@ public class WeChatController {
         // Map<String,String> map= new HashMap();
         // map.put("apikey","e10adc3949ba59abbe56e057f2gg88dd");
         // restTemplate.setDefaultUriVariables(map);
-
         //发送请求
         ResponseEntity<String> response = restTemplate.postForEntity(uri, request, String.class);
-        // 原文链接：https://blog.csdn.net/qq_39466683/article/details/107057891
-        System.out.println(response);
-        System.out.println(response.getBody());
         JSONObject obj = JSON.parseObject(response.getBody());
-
         return obj;
     }
 
@@ -198,7 +182,7 @@ public class WeChatController {
     }
 
     // 当用户用手机扫码时，微信服务器会通过post方法给我们传递数据
-    @PostMapping("/")
+    @PostMapping("/wx/callback")
     public String awaitData(@RequestBody ParseXmlForWx px){
         String FromUserName = px.getFromUserName();
         String ToUserName = px.getToUserName();
@@ -209,36 +193,21 @@ public class WeChatController {
         // 这个作为区分哪个用户扫码的
         String EventKey = px.getEventKey();
         this.loginObj.put(EventKey, true);
-        System.out.println("所有用户"+this.loginObj);
-
         Long now = new Date().getTime();
 
         // 回复信息给 微信服务器
         String content = "";
-        if(MsgType.equals("text") ){
-            if(fromContent.equals("1") ){
-                content = "努力吧！";
-            } else if(fromContent.equals("2")){
-                content = "再坚持一会，就成功了";
-            } else if(fromContent.contains("爱")){
-                content = "爱你一万年！";
-            } else {
-                content = "谢谢！";
-            }
-        }
-        else if(MsgType.equals("event")){
-            content = "event事件";
+        if(MsgType.equals("event")){
             if(Event.equals("SCAN")){
                 content = "欢迎登录代码下载器平台";
             }else if(Event.equals("subscribe")){
+                String subKey = EventKey.split("_")[1];
+                this.loginObj.put(subKey,true);
                 content = "感谢您的关注，祝您使用愉快";
-            }
-            if(Event.equals("unsubscribe")){
-                content = "江湖再见！";
             }
         }
         else{
-            content = "其他信息来源！";
+            content = "欢迎登录代码下载器平台, 祝您使用愉快";
         }
         // 根据来时的信息格式，重组返回。(注意中间不能有空格)
         String msgStr = "<xml>"
@@ -248,7 +217,6 @@ public class WeChatController {
                 +"<MsgType><![CDATA[text]]></MsgType>"
                 +"<Content><![CDATA["+content+"]]></Content>"
                 +"</xml>";
-
         return msgStr;
     }
 
@@ -270,6 +238,7 @@ public class WeChatController {
             return false;
         }
     }
+
     @GetMapping("Logout")
     public Boolean Logout(@RequestParam String myid){
         if(this.loginObj !=null){
