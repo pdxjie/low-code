@@ -12,7 +12,9 @@ const getters = {
   addRouters: state => state.permission.addRouters,
   multiTab: state => state.app.multiTab,
   dataSource: state => state.database.dataSource,
-  tables: state => state.database.tables
+  tables: state => state.database.tables,
+  tableData: state => state.table.currentTableData,
+  onlineTableData: state => state.table.onlineTableData
 }
 
 export default getters

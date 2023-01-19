@@ -1,8 +1,5 @@
 <template>
   <div class="online-container">
-    <!--    <a-card>-->
-    <!--      <SearchForm/>-->
-    <!--    </a-card>-->
     <a-card class="data-container">
       <div class="operation">
         <a-button @click="handlePlus" icon="plus" type="primary">新增</a-button>
@@ -24,7 +21,7 @@
             {{ item }}
           </a-select-option>
         </a-select>
-        <a-select allowClear default-value="请选择数据库" style="width: 130px" @change="handleChangeDatabase">
+        <a-select allowClear :default-value="onlineTableData.val?onlineTableData.val:'请选择数据库'" style="width: 130px" @change="handleChangeDatabase">
           <a-select-option v-for="(item,index) in databases" :key="index" :value="item">
             {{ item }}
           </a-select-option>
@@ -34,7 +31,7 @@
         :pagination="{ pageSize: clientWidth > 2000 ? 12:8 }"
         :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         :columns="tableColumn"
-        :data-source="data"
+        :data-source="onlineTableData.result"
       >
       </a-table>
       <a-modal
@@ -109,6 +106,9 @@ export default {
   computed: {
     hasToken () {
       return this.$store.getters.token
+    },
+    onlineTableData () {
+      return this.$store.getters.onlineTableData
     }
   },
   methods: {
@@ -151,7 +151,8 @@ export default {
       }
     },
     handlePlus () {
-      if (this.tableName.trim() === '') {
+      this.tableName = this.onlineTableData.val
+      if (!this.tableName || this.tableName.trim() === '') {
         message.warning('请选择数据库')
       } else {
         this.columnPlusVisible = true
@@ -168,7 +169,11 @@ export default {
         tableName: val
       }
       const { data: { result } } = await TableInfos(params)
-      this.data = result
+      const tableData = {
+        result,
+        val
+      }
+      this.$store.dispatch('table/onlineTableData', tableData)
     }
   }
 }

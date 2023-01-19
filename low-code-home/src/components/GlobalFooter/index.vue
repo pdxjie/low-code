@@ -6,7 +6,7 @@
           <span>欢迎提出建议和 Bug 反馈</span>
         </template>
         <a-icon type="bug" />
-        <a href="https://support.qq.com/products/435498" class="anthor">产品反馈</a>
+        <a href="https://github.com/pdxjie/low-code/issues" class="anthor">产品反馈</a>
       </a-tooltip>
 
       <a-tooltip placement="top">
@@ -24,7 +24,7 @@
           <span> 查看本站源码，欢迎 star 🌟</span>
         </template>
         <a-icon type="github" />
-        <a href="https://gitee.com/gao-wumao/sql-transformation" class="anthor">支持项目</a>
+        <a href="https://github.com/pdxjie/low-code" class="anthor">支持项目</a>
       </a-tooltip>
     </template>
     <template v-slot:copyright>

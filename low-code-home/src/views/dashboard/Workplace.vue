@@ -6,7 +6,7 @@
           <a-button @click="configDataSource" type="primary">数据源配置</a-button>
           <a-form layout="inline">
             <a-form-item label="数据库">
-              <a-select default-value="请选择" style="width: 120px" @change="handleDataBaseChange">
+              <a-select :default-value="tableData.val ? tableData.val:'请选择'" style="width: 120px" @change="handleDataBaseChange">
                 <a-select-option v-for="(item,index) in dataBases" :key="index" :value="item">
                   {{ item }}
                 </a-select-option>
@@ -38,7 +38,7 @@
         <a-table
           :rowKey="(record)=>record.key"
           :columns="tableColumns"
-          :data-source="tables"
+          :data-source="tableData.result"
           :pagination="{ pageSize: clientWidth > 2000 ? 12:8 }"
           :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         />
@@ -108,6 +108,9 @@ export default {
   computed: {
     hasToken () {
       return this.$store.getters.token
+    },
+    tableData () {
+      return this.$store.getters.tableData
     }
   },
   watch: {
@@ -152,6 +155,11 @@ export default {
       }
       const { data: { result } } = await TableInfos(params)
       this.tables = result
+      const tableData = {
+        result,
+        val
+      }
+      this.$store.dispatch('table/currentTablesData', tableData)
       console.log(result)
     },
     // 保存数据源连接
