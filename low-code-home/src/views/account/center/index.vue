@@ -8,19 +8,11 @@
               <img :src="avatar">
             </div>
             <div class="username">{{ nickname }}</div>
-            <div class="bio">海纳百川，有容乃大</div>
+            <div class="bio">快来描述一下自己的特点吧~</div>
           </div>
           <div class="account-center-detail">
             <p>
-              <i class="title"></i>交互专家
-            </p>
-            <p>
-              <i class="group"></i>蚂蚁金服－某某某事业群－某某平台部－某某技术部－UED
-            </p>
-            <p>
-              <i class="address"></i>
-              <span>浙江省</span>
-              <span>杭州市</span>
+              <i class="title"></i>节奏大师
             </p>
           </div>
           <a-divider/>
@@ -55,7 +47,7 @@
                 @keyup.enter="handleTagInputConfirm"
               />
               <a-tag v-else @click="showTagInput" style="background: #fff; borderStyle: dashed;">
-                <a-icon type="plus"/>New Tag
+                <a-icon type="plus"/> 新标签
               </a-tag>
             </div>
           </div>
@@ -74,24 +66,26 @@
         </a-card>
       </a-col>
     </a-row>
+    <BackTop :visibilityHeight="100"/>
   </div>
 </template>
 
 <script>
 import { PageView, RouteView } from '@/layouts'
 import { AppPage } from './page'
-
+import { BackTop } from 'ant-design-vue'
 import { mapGetters } from 'vuex'
 
 export default {
   components: {
     RouteView,
     PageView,
-    AppPage
+    AppPage,
+    BackTop
   },
   data () {
     return {
-      tags: ['很有想法的', '专注设计', '辣~', '大长腿', '川妹子', '海纳百川'],
+      tags: ['很有想法的', '专注设计', '海纳百川'],
 
       tagInputVisible: false,
       tagInputValue: '',
@@ -111,16 +105,8 @@ export default {
     ...mapGetters(['nickname', 'avatar'])
   },
   mounted () {
-    this.getTeams()
   },
   methods: {
-    getTeams () {
-      this.$http.get('/workplace/teams').then(res => {
-        this.teams = res.result
-        this.teamSpinning = false
-      })
-    },
-
     handleTabChange (key, type) {
       this[type] = key
     },
@@ -136,7 +122,6 @@ export default {
         this.$refs.tagInput.focus()
       })
     },
-
     handleInputChange (e) {
       this.tagInputValue = e.target.value
     },

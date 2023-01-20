@@ -7,12 +7,12 @@
       </template>
       <a-avatar @click="toLogin" style="margin-right: 20px" size="large" class="antd-pro-global-header-index-avatar" />
     </a-tooltip>
-
   </div>
 </template>
 
 <script>
 import AvatarDropdown from './AvatarDropdown'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 export default {
   name: 'RightContent',
@@ -43,6 +43,14 @@ export default {
       currentUser: {}
     }
   },
+  watch: {
+    hasToken: {
+      immediate: true,
+      handler (a, b) {
+        console.log('###', a, '$$$', b)
+      }
+    }
+  },
   computed: {
     wrpCls () {
       return {
@@ -51,14 +59,12 @@ export default {
       }
     },
     hasToken () {
-      return this.$store.getters.token
+      return localStorage.getItem(ACCESS_TOKEN)
     }
   },
   mounted () {
     setTimeout(() => {
-      this.currentUser = {
-        name: 'Serati Ma'
-      }
+      this.currentUser = this.$store.getters.userInfo
     }, 1500)
   },
   methods: {

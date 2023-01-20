@@ -1,6 +1,6 @@
 import storage from 'store'
 import expirePlugin from 'store/plugins/expire'
-import { login, getInfo, logout } from '@/api/login'
+import { login, getInfo, Register } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
@@ -26,9 +26,6 @@ const user = {
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
     },
-    SET_ROLES: (state, roles) => {
-      state.roles = roles
-    },
     SET_INFO: (state, info) => {
       state.info = info
     }
@@ -37,10 +34,13 @@ const user = {
   actions: {
     // 登录
     Login ({ commit }, userInfo) {
+      console.log('@@@', userInfo)
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
-          const result = response.result
-          storage.set(ACCESS_TOKEN, result.token, new Date().getTime() + 7 * 24 * 60 * 60 * 1000)
+          const result = response.data
+          // storage.set(ACCESS_TOKEN, result.token, new Date().getTime() + 10 * 24 * 60 * 60 * 1000)
+          console.log(result.accessToken)
+          localStorage.setItem(ACCESS_TOKEN, result.accessToken)
           commit('SET_TOKEN', result.token)
           resolve()
         }).catch(error => {
@@ -53,30 +53,14 @@ const user = {
     GetInfo ({ commit }) {
       return new Promise((resolve, reject) => {
         // 请求后端获取用户信息 /api/user/info
-        getInfo().then(response => {
-          const { result } = response
-          if (result.role && result.role.permissions.length > 0) {
-            const role = { ...result.role }
-            role.permissions = result.role.permissions.map(permission => {
-              const per = {
-                ...permission,
-                actionList: (permission.actionEntitySet || {}).map(item => item.action)
-               }
-              return per
-            })
-            role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-            // 覆盖响应体的 role, 供下游使用
-            result.role = role
-
-            commit('SET_ROLES', role)
-            commit('SET_INFO', result)
-            commit('SET_NAME', { name: result.name, welcome: welcome() })
-            commit('SET_AVATAR', result.avatar)
-            // 下游
-            resolve(result)
-          } else {
-            reject(new Error('getInfo: roles must be a non-null array !'))
-          }
+        const token = localStorage.getItem(ACCESS_TOKEN)
+        getInfo(token).then(response => {
+          console.log(response)
+          const { data } = response
+          commit('SET_NAME', { name: data.userDetail.nickName, welcome: welcome() })
+          commit('SET_AVATAR', data.userDetail.avatar)
+          commit('SET_INFO', data.userDetail)
+            resolve(data.userDetail)
         }).catch(error => {
           reject(error)
         })
@@ -84,21 +68,24 @@ const user = {
     },
 
     // 登出
-    Logout ({ commit, state }) {
-      return new Promise((resolve) => {
-        logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          storage.remove(ACCESS_TOKEN)
-          resolve()
-        }).catch((err) => {
-          console.log('logout fail:', err)
-          // resolve()
-        }).finally(() => {
+    Logout ({ commit }) {
+      commit('SET_TOKEN', '')
+      localStorage.removeItem(ACCESS_TOKEN)
+      // TODO清除缓存数据
+    },
+
+    // 注册
+    RegisterOperate ({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        Register(data).then(res => {
+          console.log(res)
+          resolve(res)
+        }).catch(error => {
+          console.log(error)
+          reject(error)
         })
       })
     }
-
   }
 }
 

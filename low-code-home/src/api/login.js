@@ -1,15 +1,16 @@
 import request from '@/utils/request'
 
 const userApi = {
-  Login: '/auth/login',
   Logout: '/auth/logout',
   ForgePassword: '/auth/forge-password',
-  Register: '/auth/register',
   twoStepCode: '/auth/2step-code',
-  SendSms: '/account/sms',
+
   SendSmsErr: '/account/sms_err',
   // get my info
-  UserInfo: '/user/info',
+  UserInfo: '/user/detail/info',
+  SendSms: '/user/code',
+  Login: '/user/login',
+  Register: '/user/register',
   UserMenu: '/user/nav'
 }
 
@@ -32,6 +33,14 @@ export function login (parameter) {
   })
 }
 
+export function Register (parameter) {
+  return request({
+    url: userApi.Register,
+    method: 'post',
+    data: parameter
+  })
+}
+
 export function getSmsCaptcha (parameter) {
   return request({
     url: userApi.SendSms,
@@ -40,13 +49,10 @@ export function getSmsCaptcha (parameter) {
   })
 }
 
-export function getInfo () {
+export function getInfo (params) {
   return request({
-    url: userApi.UserInfo,
-    method: 'get',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    url: userApi.UserInfo + '?accessToken=' + params,
+    method: 'get'
   })
 }
 
@@ -56,17 +62,6 @@ export function getCurrentUserNav () {
     method: 'get'
   })
 }
-
-export function logout () {
-  return request({
-    url: userApi.Logout,
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
-  })
-}
-
 /**
  * get user 2step code open?
  * @param parameter {*}
