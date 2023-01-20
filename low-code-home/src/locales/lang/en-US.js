@@ -1,15 +1,15 @@
-import antdEnUS from 'ant-design-vue/es/locale-provider/en_US'
+import antdEnUS from 'ant-design-vue/es/locale-provider/zh_CN'
 import momentEU from 'moment/locale/eu'
-import global from './en-US/global'
+import global from './zh-CN/global'
 
-import menu from './en-US/menu'
-import setting from './en-US/setting'
-import user from './en-US/user'
+import menu from './zh-CN/menu'
+import setting from './zh-CN/setting'
+import user from './zh-CN/user'
 
-import dashboard from './en-US/dashboard'
-import form from './en-US/form'
-import result from './en-US/result'
-import account from './en-US/account'
+import dashboard from './zh-CN/dashboard'
+import form from './zh-CN/form'
+import result from './zh-CN/result'
+import account from './zh-CN/account'
 
 const components = {
   antLocale: antdEnUS,

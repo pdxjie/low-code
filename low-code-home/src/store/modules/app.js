@@ -29,7 +29,7 @@ const app = {
     color: '',
     weak: false,
     multiTab: true,
-    lang: 'en-US',
+    lang: 'zh-CN',
     _antLocale: {}
   },
   mutations: {
@@ -83,7 +83,7 @@ const app = {
     }
   },
   actions: {
-    setLang ({ commit }, lang) {
+    setLang ({ commit }, lang = 'zh-CN') {
       return new Promise((resolve, reject) => {
         commit(APP_LANGUAGE, lang)
         loadLanguageAsync(lang).then(() => {

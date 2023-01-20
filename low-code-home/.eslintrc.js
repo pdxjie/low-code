@@ -33,6 +33,8 @@ module.exports = {
     'vue/html-closing-bracket-newline': 0,
     'vue/no-parsing-error': 0,
     'no-tabs': 0,
+    'no-useless-escape': 0,
+    'camelcase': 0,
     'quotes': [
       2,
       'single',
