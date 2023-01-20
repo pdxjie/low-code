@@ -209,13 +209,6 @@ export default {
         (err, values) => {
           if (!err) {
             state.smsSendBtn = true
-            const interval = window.setInterval(() => {
-              if (state.time-- <= 0) {
-                state.time = 60
-                state.smsSendBtn = false
-                window.clearInterval(interval)
-              }
-            }, 1000)
             console.log(values.email)
             // 校验QQ邮箱
             if (values.email.trim() === '') {
@@ -230,7 +223,13 @@ export default {
               state.loginBtn = false
               return
             }
-            console.log(values.email)
+            const interval = window.setInterval(() => {
+              if (state.time-- <= 0) {
+                state.time = 60
+                state.smsSendBtn = false
+                window.clearInterval(interval)
+              }
+            }, 1000)
             const hide = $message.loading('验证码发送中..', 0)
             getSmsCaptcha({ email: values.email }).then(res => {
               console.log('结果', res)
