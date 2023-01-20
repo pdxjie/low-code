@@ -30,7 +30,7 @@
     <template v-slot:copyright>
       <a-icon type="copyright" />
       <a class="anthor">
-        Create By PDX
+        2022 Create By PDX
       </a>
     </template>
   </global-footer>
