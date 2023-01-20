@@ -11,6 +11,7 @@ import java.util.List;
  */
 @Data
 public class FolderDto {
+
     private String value;
 
     private String label;
