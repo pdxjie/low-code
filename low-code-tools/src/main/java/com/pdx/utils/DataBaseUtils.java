@@ -291,16 +291,4 @@ public class DataBaseUtils {
         }
         return StringUtils.makeAllWordFirstLetterUpperCase(temp);
     }
-
-    public static void main(String[] args) throws Exception {
-        ConfigurationInfo dataBase = new ConfigurationInfo();
-        dataBase.setPassword("233031");
-        dataBase.setIp("127.0.0.1");
-        dataBase.setPort("3306");
-        dataBase.setLoginName("root");
-        List<Table> dbInfo = DataBaseUtils.getDbInfo(dataBase);
-        for (Table table : dbInfo) {
-            System.out.println(table);
-        }
-    }
 }

@@ -12,8 +12,6 @@ import java.util.List;
  */
 public interface DBService {
 
-
-    List<String> allTables(Connection connection);
-
     Boolean createTable(JSONObject jsonObject);
+
 }
