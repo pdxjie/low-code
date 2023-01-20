@@ -1,0 +1,22 @@
+export const iconImages = [
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/1.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/2.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/3.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/4.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/5.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/6.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/7.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/8.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/9.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/10.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/11.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/12.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/13.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/14.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/15.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/16.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/17.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/18.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/19.jpg',
+  'https://edu-2330.oss-cn-beijing.aliyuncs.com/icon-images/20.jpg'
+]
