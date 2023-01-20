@@ -1,7 +1,23 @@
 <template>
   <div class="app-list">
+    <a-card class="plus-datasource" >
+      <a-form layout="inline" :form="searchForm">
+        <a-form-item>
+          <a-button @click="addDataSourceInfo" type="primary" icon="plus">新增数据源</a-button>
+        </a-form-item>
+        <a-form-item >
+          <a-input v-model="searchForm.sourceName" placeholder="输入数据源名称">
+          </a-input>
+        </a-form-item>
+        <a-form-item >
+          <a-button type="primary" style="margin-right: 10px" @click="searchDataSource">搜索</a-button>
+          <a-button>重置</a-button>
+        </a-form-item>
+      </a-form>
+    </a-card>
     <a-list
       :grid="{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }"
+      :pagination="pagination"
       :dataSource="dataSource">
       <a-list-item slot="renderItem" slot-scope="item">
         <a-card :hoverable="true">
@@ -28,12 +44,21 @@
             <a>
               <i class="iconfont icon-lianjie_" @click="checkOutConnect"></i>
             </a>
+            <a>
+              <a-icon type="delete" @click="removeDataSourceInfo"/>
+            </a>
           </template>
         </a-card>
       </a-list-item>
     </a-list>
-    <a-modal v-model="editDataSourceVisible" title="修改数据源信息" @ok="openDataSourceConfigInfo">
+    <!-- 修改数据源 -->
+    <a-modal v-model="editDataSourceVisible" title="修改数据源配置" @ok="openDataSourceConfigInfo">
       <EditDataSourceConfigInfo/>
+    </a-modal>
+
+    <!-- 添加数据源 -->
+    <a-modal v-model="addDataSourceVisible" title="添加数据源配置" @ok="openAddDataSourceConfigInfo">
+      <AddDataSourceConfigInfo/>
     </a-modal>
   </div>
 </template>
@@ -41,11 +66,22 @@
 <script>
 import { message } from 'ant-design-vue'
 import EditDataSourceConfigInfo from '@/views/account/center/EditDataSourceConfigInfo'
+import AddDataSourceConfigInfo from '@/views/account/center/AddDataSourceConfigInfo'
+import { listByCondition } from '@/api/datasource'
 export default {
   name: 'Article',
-  components: { EditDataSourceConfigInfo },
+  components: { AddDataSourceConfigInfo, EditDataSourceConfigInfo },
   data () {
     return {
+      searchForm: {
+        sourceName: ''
+      },
+      pagination: {
+        onChange: page => {
+          this.searchDataSource(page)
+        },
+        pageSize: 9
+      },
       dataSource: [
         {
           title: '人力资源',
@@ -90,10 +126,25 @@ export default {
           newUser: 2
         }
       ],
-      editDataSourceVisible: false
+      editDataSourceVisible: false,
+      addDataSourceVisible: false
     }
   },
+  mounted () {
+    this.searchDataSource()
+  },
   methods: {
+    async searchDataSource (page = 1) {
+      const userInfo = this.$store.getters.userInfo
+      const parameter = {
+        userId: userInfo.id,
+        pageSize: this.pagination.pageSize,
+        page: page,
+        sourceName: this.searchForm.sourceName
+      }
+      const { data } = await listByCondition(parameter)
+      console.log(data)
+    },
     checkOutConnect () {
       message.success('连接成功')
     },
@@ -102,7 +153,14 @@ export default {
     },
     openDataSourceConfigInfo () {
       this.editDataSourceVisible = false
-    }
+    },
+    addDataSourceInfo () {
+      this.addDataSourceVisible = true
+    },
+    openAddDataSourceConfigInfo () {
+      this.addDataSourceVisible = false
+    },
+    removeDataSourceInfo () {}
   }
 }
 </script>
@@ -110,6 +168,12 @@ export default {
 <style lang="less" scoped>
 
   .app-list {
+    .plus-datasource{
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 10px;
+    }
 
     .meta-cardInfo {
       zoom: 1;

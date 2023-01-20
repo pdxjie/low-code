@@ -1,19 +1,19 @@
 <template>
-  <a-dropdown v-if="currentUser && currentUser.name" :trigger="['click']" placement="bottomRight">
+  <a-dropdown v-if="currentUser && currentUser.nickName" :trigger="['click']" placement="bottomRight">
     <span class="ant-pro-account-avatar">
-      <a-avatar size="small" src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png" class="antd-pro-global-header-index-avatar" />
-      <span>{{ currentUser.name }}</span>
+      <a-avatar size="small" :src="currentUser.avatar" class="antd-pro-global-header-index-avatar" />
+      <span>{{ currentUser.nickName }}</span>
     </span>
     <template v-slot:overlay>
       <a-menu class="ant-pro-drop-down menu" :selected-keys="[]">
         <a-menu-item v-if="menu" key="center" @click="handleToCenter">
           <a-icon type="user" />
-          {{ $t('menu.account.center') }}
+          个人中心
         </a-menu-item>
         <a-menu-divider v-if="menu" />
         <a-menu-item key="logout" @click="handleLogout">
           <a-icon type="logout" />
-          {{ $t('menu.account.logout') }}
+          退出登录
         </a-menu-item>
       </a-menu>
     </template>
@@ -42,20 +42,16 @@ export default {
     handleToCenter () {
       this.$router.push({ path: '/account/center' })
     },
-    handleToSettings () {
-      this.$router.push({ path: '/account/settings' })
-    },
     handleLogout (e) {
       Modal.confirm({
         title: this.$t('layouts.usermenu.dialog.title'),
         content: this.$t('layouts.usermenu.dialog.content'),
         onOk: () => {
-          // return new Promise((resolve, reject) => {
-          //   setTimeout(Math.random() > 0.5 ? resolve : reject, 1500)
-          // }).catch(() => console.log('Oops errors!'))
-          return this.$store.dispatch('Logout').then(() => {
-            this.$router.push({ name: 'Workplace' })
-          })
+          // 清除token
+          this.$store.dispatch('Logout')
+          this.$router.push({ name: 'Workplace' })
+          // 强制刷新
+          location.reload()
         },
         onCancel () {}
       })

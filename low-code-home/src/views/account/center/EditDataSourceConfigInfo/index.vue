@@ -10,15 +10,12 @@
           list-type="picture-card"
           class="avatar-uploader"
           :show-upload-list="false"
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          :before-upload="beforeUpload"
-          @change="handleChange"
         >
-          <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
+          <img class="icon-style" v-if="imageUrl" :src="imageUrl" alt="avatar" />
           <div v-else>
-            <a-icon :type="loading ? 'loading' : 'plus'" />
+            <a-icon :type="loading ? 'loading' : 'select'" />
             <div class="ant-upload-text">
-              上传
+              选择图标
             </div>
           </div>
         </a-upload>
@@ -57,13 +54,12 @@
     </a-form>
     <a-drawer
       title="选择图标"
-      :placement="placement"
       :closable="false"
       width="450"
       :visible="logoVisible"
       @close="onClose"
     >
-      <LogoPicker/>
+      <LogoPicker ref="choseIcon"/>
       <div
         :style="{
           position: 'absolute',
@@ -80,7 +76,7 @@
         <a-button :style="{ marginRight: '8px' }" @click="onClose">
           取消
         </a-button>
-        <a-button type="primary" @click="onClose">
+        <a-button type="primary" @click="choseSure">
           确认
         </a-button>
       </div>
@@ -90,11 +86,6 @@
 
 <script>
 import LogoPicker from '@/views/account/center/LogoPicker'
-function getBase64 (img, callback) {
-  const reader = new FileReader()
-  reader.addEventListener('load', () => callback(reader.result))
-  reader.readAsDataURL(img)
-}
 export default {
   name: 'EditDataSourceConfigInfo',
   components: { LogoPicker },
@@ -110,34 +101,14 @@ export default {
     }
   },
   methods: {
-    handleChange (info) {
-      if (info.file.status === 'uploading') {
-        this.loading = true
-        return
-      }
-      if (info.file.status === 'done') {
-        // Get this url from response in real world.
-        getBase64(info.file.originFileObj, imageUrl => {
-          this.imageUrl = imageUrl
-          this.loading = false
-        })
-      }
-    },
-    beforeUpload (file) {
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
-      if (!isJpgOrPng) {
-        this.$message.error('You can only upload JPG file!')
-      }
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isLt2M) {
-        this.$message.error('Image must smaller than 2MB!')
-      }
-      return isJpgOrPng && isLt2M
-    },
     selectLogo () {
       this.logoVisible = true
     },
     onClose () {
+      this.logoVisible = false
+    },
+    choseSure () {
+      this.imageUrl = this.$refs.choseIcon.iconUrl
       this.logoVisible = false
     }
   }
@@ -147,5 +118,13 @@ export default {
 <style lang='less' scoped>
  ::v-deep .ant-form-item-control {
    line-height: 10px!important;
+ }
+ ::v-deep .ant-upload.ant-upload-select-picture-card > .ant-upload {
+   cursor: default!important;
+   pointer-events: none!important;
+ }
+ .icon-style {
+   width: 102px;
+   height: 102px;
  }
 </style>
