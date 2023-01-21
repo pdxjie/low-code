@@ -140,6 +140,7 @@ export default {
       } else {
         message.error('连接失败')
       }
+      this.searchDataSource()
     },
     async editDataSourceInfo (id) {
       const { data } = await DataSourceDetailInfo(id)

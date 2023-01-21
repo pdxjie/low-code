@@ -47,7 +47,6 @@ export default {
     hasToken: {
       immediate: true,
       handler (a, b) {
-        console.log('###', a, '$$$', b)
       }
     }
   },

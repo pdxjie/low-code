@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import database from '@/store/modules/database'
 import app from './modules/app'
 import user from './modules/user'
-import table from '@/store/modules/table'
+import table from './modules/table'
 
 // default router permission control
 // 默认路由模式为静态路由 (router.config.js)

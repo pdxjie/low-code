@@ -50,6 +50,17 @@ export const DataSourceDetailInfo = (id) => {
     method: 'get'
   })
 }
+/**
+ * 数据源详情
+ * @param id
+ * @returns {AxiosPromise}
+ */
+export const DataSourceDetail = (id) => {
+  return request({
+    url: `/source/detail/${id}`,
+    method: 'get'
+  })
+}
 
 /**
  * 删除数据源

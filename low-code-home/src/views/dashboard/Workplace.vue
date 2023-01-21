@@ -3,10 +3,15 @@
     <div class="left">
       <a-card title="代码生成">
         <div class="config">
-          <a-button @click="configDataSource" type="primary">数据源配置</a-button>
+          <a-button v-show="!hasToken" @click="configDataSource" type="primary">数据源配置</a-button>
+          <a-select v-show="hasToken" :default-value="currentDataSource.sourceName?currentDataSource.sourceName:'请选择数据源'" style="width: 150px" @change="handleDataSourceChange">
+            <a-select-option v-for="(item,index) in dataSources" :key="index" :value="item.id">
+              {{ item.sourceName }}
+            </a-select-option>
+          </a-select>
           <a-form layout="inline">
             <a-form-item label="数据库">
-              <a-select :default-value="tableData.val ? tableData.val:'请选择'" style="width: 120px" @change="handleDataBaseChange">
+              <a-select :default-value="tableData.val ? tableData.val:'请选择'" style="width: 150px" @change="handleDataBaseChange">
                 <a-select-option v-for="(item,index) in dataBases" :key="index" :value="item">
                   {{ item }}
                 </a-select-option>
@@ -83,6 +88,8 @@ import { tableColumns } from '@/utils/columns'
 import { message, BackTop } from 'ant-design-vue'
 import ConfigDataSource from '@/views/dashboard/ConfigDataSource'
 import GeneratorCode from '@/views/dashboard/GeneratorCode'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { DataSourceDetail, dataSources } from '@/api/datasource'
 export default {
   name: 'Workplace',
   components: {
@@ -102,16 +109,19 @@ export default {
       options: [],
       filePath: '请选择代码生成目录',
       tables: [],
-      tableNames: []
+      tableNames: [],
+      hasToken: '',
+      dataSources: []
     }
   },
   computed: {
-    hasToken () {
-      return this.$store.getters.token
-    },
     tableData () {
       return this.$store.getters.tableData
+    },
+    currentDataSource () {
+      return this.$store.getters.currentDataSource
     }
+
   },
   watch: {
     generatorCodeVisible: {
@@ -125,6 +135,11 @@ export default {
     }
   },
   mounted () {
+    this.hasToken = localStorage.getItem(ACCESS_TOKEN)
+    // 用户已登录再执行
+    if (this.hasToken) {
+      this.AllDataSource()
+    }
     this.getFilesData()
     this.allTables()
     const that = this
@@ -134,9 +149,13 @@ export default {
         that.clientWidth = window.clientWidth
       })()
     }
-    console.log(this.clientWidth)
   },
   methods: {
+    async AllDataSource () {
+      const userId = this.$store.getters.userInfo.userId
+      const { data } = await dataSources(userId)
+      this.dataSources = data.dataSources
+    },
     configDataSource () {
       this.ConfigDataSourceVisible = true
     },
@@ -145,6 +164,19 @@ export default {
       this.$http.post('/file/Folders', { files: this.filePath }).then(res => {
         this.options = res.folders
       })
+    },
+    async handleDataSourceChange (val) {
+      const { data } = await DataSourceDetail(val)
+      console.log(data.dataSource)
+      this.$store.dispatch('table/currentDataSourceData', data.dataSource)
+      const parameter = {
+        ip: data.dataSource.sourceIp,
+        port: data.dataSource.sourcePort,
+        loginName: data.dataSource.sourceAccount,
+        password: data.dataSource.sourcePassword
+      }
+      const result = await this.$store.dispatch('database/allTableList', parameter)
+      this.dataBases = result
     },
     async handleDataBaseChange (val) {
       this.selectedRowKeys = []
@@ -168,7 +200,6 @@ export default {
         this.loading = true
         if (res) {
           this.allTables()
-          console.log('@@', this.dataBases)
           this.ConfigDataSourceVisible = false
         } else {
           message.error('连接失败，请核查数据源信息')
@@ -187,7 +218,6 @@ export default {
       this.$store.dispatch('database/checkOutConnectResult', this.$refs.checkOutConn.dataSourceConfig)
     },
     onSelectChange (selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
     },
     generatorCode () {

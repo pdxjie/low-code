@@ -14,7 +14,8 @@ const getters = {
   dataSource: state => state.database.dataSource,
   tables: state => state.database.tables,
   tableData: state => state.table.currentTableData,
-  onlineTableData: state => state.table.onlineTableData
+  onlineTableData: state => state.table.onlineTableData,
+  currentDataSource: state => state.table.currentDataSource
 }
 
 export default getters

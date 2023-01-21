@@ -34,7 +34,6 @@ const user = {
   actions: {
     // 登录
     Login ({ commit }, userInfo) {
-      console.log('@@@', userInfo)
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
           const result = response.data
@@ -55,7 +54,6 @@ const user = {
         // 请求后端获取用户信息 /api/user/info
         const token = localStorage.getItem(ACCESS_TOKEN)
         getInfo(token).then(response => {
-          console.log(response)
           const { data } = response
           commit('SET_NAME', { name: data.userDetail.nickName, welcome: welcome() })
           commit('SET_AVATAR', data.userDetail.avatar)
@@ -78,10 +76,8 @@ const user = {
     RegisterOperate ({ commit }, data) {
       return new Promise((resolve, reject) => {
         Register(data).then(res => {
-          console.log(res)
           resolve(res)
         }).catch(error => {
-          console.log(error)
           reject(error)
         })
       })

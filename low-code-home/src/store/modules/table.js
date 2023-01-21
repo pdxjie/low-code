@@ -28,16 +28,19 @@ function getOnlineTableData () {
 
 const state = {
   currentTableData: getCurrentTableData(),
-  onlineTableData: getOnlineTableData()
+  onlineTableData: getOnlineTableData(),
+  currentDataSource: JSON.parse(localStorage.getItem('currentDataSource')) || {}
 }
 
 const actions = {
   currentTablesData ({ commit }, data) {
-    console.log(data)
     commit('SET_CURRENTTABLES', data)
   },
   onlineTableData ({ commit }, data) {
     commit('SET_ONLINETABLEDATA', data)
+  },
+  currentDataSourceData ({ commit }, data) {
+    commit('SET_CURRENTDATASOURCE', data)
   }
 }
 
@@ -67,6 +70,10 @@ const mutations = {
       sessionStorage.setItem('onlineTableData', JSON.stringify(data))
     }
     state.onlineTableData = data
+  },
+  SET_CURRENTDATASOURCE (state, data) {
+    localStorage.removeItem('currentDataSource')
+    localStorage.setItem('currentDataSource', JSON.stringify(data))
   }
 }
 

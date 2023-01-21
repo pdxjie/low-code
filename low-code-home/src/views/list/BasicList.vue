@@ -70,6 +70,7 @@ import SearchForm from '@/views/list/SearchForm'
 import ConfigFormEdit from '@/views/list/ConfigFormEdit'
 import ConfigFormPlus from '@/views/list/ConfigFormPlus'
 import { TableInfos, TableDetailInfo, CreateTable } from '@/api/database'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
 export default {
   name: 'StandardList',
   components: { ConfigFormPlus, ConfigFormEdit, SearchForm, BackTop },
@@ -80,14 +81,16 @@ export default {
       columnEditVisible: false,
       columnPlusVisible: false,
       selectedRowKeys: [],
-      dataSource: ['博客系统', '人力资源系统'],
+      dataSource: [],
       databases: [],
       tableDetailData: {},
       tableName: '',
-      data: []
+      data: [],
+      hasToken: ''
     }
   },
   mounted () {
+    this.hasToken = localStorage.getItem(ACCESS_TOKEN)
     this.allTables()
     const that = this
     window.onresize = () => {
@@ -99,13 +102,13 @@ export default {
   },
   watch: {
     clientWidth (newVal, oldVal) {
-      console.log(newVal)// 浏览器窗口变化时，打印宽度。
+      // 浏览器窗口变化时，打印宽度。
     }
   },
   computed: {
-    hasToken () {
-      return this.$store.getters.token
-    },
+    // hasToken () {
+    //   return this.$store.getters.token
+    // },
     onlineTableData () {
       return this.$store.getters.onlineTableData
     }

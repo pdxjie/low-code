@@ -76,6 +76,22 @@ const actions = {
     } else {
       return data.success
     }
+  },
+  async allTableList ({ commit }, params) {
+    const data = await AllTables(params)
+    if (data.success) {
+      commit('SET_DATABASEINFO', params)
+      if (localStorage.getItem(ACCESS_TOKEN)) {
+        // 存储数据源信息
+        localStorage.setItem('dataSource', JSON.stringify(params))
+        // 存储数据源中表数据
+        localStorage.setItem('dataBases', JSON.stringify(data.data.result))
+        commit('SET_DATABASETABLES', data.data.result)
+      }
+      return data.data.result
+    } else {
+      return data.success
+    }
   }
 }
 
