@@ -41,6 +41,4 @@ public class DataSource {
     private Integer connectNum;
     //数据库数量
     private Integer databaseNum;
-    private String salt;
-
 }

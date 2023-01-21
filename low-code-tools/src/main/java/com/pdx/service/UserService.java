@@ -33,7 +33,7 @@ public interface UserService extends IService<User> {
      * @param code
      * @return
      */
-    Map<String,Object> registerOperate(String email, String password, String code);
+    Map<String,Object> registerOperate(String nickName,String email, String password, String code);
 
     /**
      * 获取验证码

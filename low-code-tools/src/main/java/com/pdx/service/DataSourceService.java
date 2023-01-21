@@ -20,4 +20,8 @@ public interface DataSourceService extends IService<DataSource> {
     Map<String, Object> updateDataSource(DataSource dataSource);
 
     Map<String, Object> connectDataSource(String id);
+
+    Map<String, Object> selectDataSources(String userId);
+
+    Map<String, Object> detail(String id);
 }

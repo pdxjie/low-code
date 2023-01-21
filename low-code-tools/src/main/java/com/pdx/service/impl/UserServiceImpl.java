@@ -104,7 +104,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @return
      */
     @Override
-    public Map<String,Object> registerOperate(String email, String password, String code) {
+    public Map<String,Object> registerOperate(String nickName,String email, String password, String code) {
         Map<String,Object> resultMap = new HashMap<>();
         String registerCode = (String) redisTemplate.opsForValue().get(Constant.REGISTER_CODE + email);
         if (StringUtils.isBlank(registerCode)){
@@ -131,7 +131,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setAvatar(AvatarUtils.generatorAvatar());
             user.setEmail(email);
             user.setSalt(salt);
-            user.setNickName("用户"+IdWorker.get32UUID().substring(0,6));
+            user.setDescription("只因"+nickName+"太美");
+            user.setNickName(nickName);
             user.setPassword(encode);
             user.setRegisterTime(new Timestamp(new Date().getTime()));
             user.setUpdateTime(new Timestamp(new Date().getTime()));

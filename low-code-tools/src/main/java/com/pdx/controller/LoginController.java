@@ -54,10 +54,11 @@ public class LoginController {
      */
     @PostMapping("/register")
     public Result registerOperate(@RequestBody JSONObject jsonObject){
+        String nickName = jsonObject.getString("nickName");
         String email = jsonObject.getString("email");
         String password = jsonObject.getString("password");
         String code = jsonObject.getString("code");
-        Map<String,Object> resultMap = userService.registerOperate(email,password,code);
+        Map<String,Object> resultMap = userService.registerOperate(nickName,email,password,code);
         return Result.ok().data(resultMap);
     }
 

@@ -8,6 +8,7 @@ import com.pdx.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,12 +31,25 @@ public class DataSourceController {
      */
     @PostMapping("/list")
     public Result listByCondition(@RequestBody JSONObject jsonObject){
-        Integer page = jsonObject.getInteger("page");
-        Integer pageSize = jsonObject.getInteger("pageSize");
+        String page = jsonObject.getString("page");
+        if (!isNumeric(page)){
+            page = "1";
+        }
+        String pageSize = jsonObject.getString("pageSize");
         String sourceName = jsonObject.getString("sourceName");
         String userId = jsonObject.getString("userId");
-        Map<String,Object> resultMap = dataSourceService.listByCondition(page,pageSize,sourceName,userId);
+        Map<String,Object> resultMap = dataSourceService.listByCondition(Integer.valueOf(page),Integer.valueOf(pageSize),sourceName,userId);
         return Result.ok().data(resultMap);
+    }
+
+    public boolean isNumeric(String str) {
+        String bigStr;
+        try {
+            bigStr = new BigDecimal(str).toString();
+        } catch (Exception e) {
+            return false;//异常 说明包含非数字。
+        }
+        return true;
     }
 
     /**
@@ -64,6 +78,17 @@ public class DataSourceController {
     }
 
     /**
+     * 数据源详情
+     * @param id
+     * @return
+     */
+    @GetMapping("/detail/{id}")
+    public Result detail(@PathVariable("id")String id){
+        Map<String,Object> resultMap = dataSourceService.detail(id);
+        return Result.ok().data(resultMap);
+    }
+
+    /**
      * 更新数据源
      * @param jsonObject
      * @return
@@ -88,9 +113,25 @@ public class DataSourceController {
         return Result.ok().data(resultMap);
     }
 
+    /**
+     * 测试连接
+     * @param id
+     * @return
+     */
     @GetMapping("/connect/{id}")
     public Result connectDataSource(@PathVariable("id")String id){
         Map<String,Object> resultMap = dataSourceService.connectDataSource(id);
+        return Result.ok().data(resultMap);
+    }
+
+    /**
+     * 获取所有的数据源列表
+     * @param userId
+     * @return
+     */
+    @GetMapping("/datasource/{userId}")
+    public Result datasourceList(@PathVariable("userId")String userId){
+        Map<String,Object> resultMap = dataSourceService.selectDataSources(userId);
         return Result.ok().data(resultMap);
     }
 

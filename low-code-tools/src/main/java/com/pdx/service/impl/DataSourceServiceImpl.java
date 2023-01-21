@@ -64,7 +64,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
         configurationInfo.setIp(dataSource.getSourceIp());
         try {
             List<String> schemas = DataBaseUtils.getSchemas(configurationInfo);
-            dataSource.setDatabaseNum(schemas.size());
+            dataSource.setDatabaseNum(null == schemas ? 0 : schemas.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,6 +117,25 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return resultMap;
+    }
+
+    @Override
+    public Map<String, Object> selectDataSources(String userId) {
+        QueryWrapper<DataSource> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id",userId);
+        List<DataSource> dataSources = dataSourceMapper.selectList(wrapper);
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("dataSources",dataSources);
+        return resultMap;
+    }
+
+    @Override
+    public Map<String, Object> detail(String id) {
+        DataSource dataSource = dataSourceMapper.selectById(id);
+        dataSource.setSourcePassword(DesUtils.decrypt(dataSource.getSourcePassword()));
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("dataSource",dataSource);
         return resultMap;
     }
 }
