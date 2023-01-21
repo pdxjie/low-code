@@ -14,7 +14,6 @@
           v-if="hasToken"
           allowClear
           default-value="请选择数据源"
-          :disabled="hasToken"
           style="width: 130px"
           @change="handleChangeDatabase">
           <a-select-option v-for="(item,index) in dataSource" :key="index" :value="item">

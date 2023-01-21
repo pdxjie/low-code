@@ -42,8 +42,14 @@
 
       <a-tabs default-active-key="1">
         <a-tab-pane key="1" tab="数据库配置">
-          <a-button style="margin-bottom: 10px" icon="plus" type="primary" @click="handleAdd">新增</a-button>
-          <a-button style="margin-bottom: 10px" icon="delete" type="primary" @click="handleAdd">删除</a-button>
+          <a-button style="margin-bottom: 10px;margin-right: 10px" icon="plus" type="primary" @click="handleAdd">新增</a-button>
+          <a-button
+            style="margin-bottom: 10px"
+            icon="delete"
+            type="danger"
+            ghost
+            @click="handleRemove"
+            v-show="selectedRowKeys.length > 0">删除</a-button>
           <a-table
             :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
             :rowKey="(record)=>record.key"
@@ -181,6 +187,11 @@ export default {
         isNull: false
       }
       this.databaseTable.columnsData = [...this.databaseTable.columnsData, newOne]
+    },
+    handleRemove () {
+      this.selectedRowKeys.forEach(index => {
+        this.databaseTable.columnsData.splice(index, 1)
+      })
     },
     onSelectChange (keys) {
       this.selectedRowKeys = keys

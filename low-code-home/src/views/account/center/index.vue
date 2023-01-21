@@ -8,11 +8,11 @@
               <img :src="avatar">
             </div>
             <div class="username">{{ nickname }}</div>
-            <div class="bio">快来描述一下自己的特点吧~</div>
+            <div class="bio">{{ userInfo.description }}~</div>
           </div>
           <div class="account-center-detail">
             <p>
-              <i class="title"></i>节奏大师
+              <i class="title"></i>低代码快速搭建
             </p>
           </div>
           <a-divider/>
@@ -35,20 +35,6 @@
                   :close="() => handleTagClose(tag)"
                 >{{ tag }}</a-tag>
               </template>
-              <a-input
-                v-if="tagInputVisible"
-                ref="tagInput"
-                type="text"
-                size="small"
-                :style="{ width: '78px' }"
-                :value="tagInputValue"
-                @change="handleInputChange"
-                @blur="handleTagInputConfirm"
-                @keyup.enter="handleTagInputConfirm"
-              />
-              <a-tag v-else @click="showTagInput" style="background: #fff; borderStyle: dashed;">
-                <a-icon type="plus"/> 新标签
-              </a-tag>
             </div>
           </div>
           <a-divider :dashed="true"/>
@@ -85,7 +71,7 @@ export default {
   },
   data () {
     return {
-      tags: ['很有想法的', '专注设计', '海纳百川'],
+      tags: ['很有想法的', '专注设计', '低代码', '快速搭建'],
 
       tagInputVisible: false,
       tagInputValue: '',
@@ -102,7 +88,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['nickname', 'avatar'])
+    ...mapGetters(['nickname', 'avatar', 'userInfo'])
   },
   mounted () {
   },

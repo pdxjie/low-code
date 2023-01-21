@@ -16,6 +16,16 @@
             <a-input
               size="large"
               type="text"
+              placeholder="请输入用户昵称"
+              v-decorator="['nickName', {rules: [{ required: true, message: '用户昵称不能为空' },{ validator: this.handleCheckNickName }], validateTrigger: ['change', 'blur']}]"
+            >
+              <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+            </a-input>
+          </a-form-item>
+          <a-form-item>
+            <a-input
+              size="large"
+              type="text"
               placeholder="请输入QQ邮箱"
               v-decorator="['email', {rules: [{ required: true, type: 'email', message: '邮箱内容不能为空' }], validateTrigger: ['change', 'blur']}]"
             >
@@ -67,6 +77,7 @@
         <a-button
           size="large"
           type="primary"
+          okl
           htmlType="submit"
           class="register-button"
           :loading="registerBtn"
@@ -76,7 +87,7 @@
         <router-link class="login" :to="{ name: 'login' }">已有账户</router-link>
       </a-form-item>
 
-      </a-tabs></a-form>
+    </a-form>
   </div>
 </template>
 
@@ -141,6 +152,15 @@ export default {
       this.customActiveKey = key
       // this.form.resetFields()
     },
+    handleCheckNickName (rule, value, callback) {
+      if (!value) {
+        return callback()
+      }
+      if (value.trim() === '') {
+        return callback()
+      }
+      callback()
+    },
     handlePasswordLevel (rule, value, callback) {
       if (!value) {
         return callback()
@@ -183,8 +203,10 @@ export default {
     handleSubmit () {
       const { form: { validateFields }, state, $router } = this
       validateFields({ force: true }, (err, values) => {
+        console.log(values)
         if (!err) {
           const registerInfo = {
+            nickName: values.nickName,
             email: values.email,
             password: values.password,
             code: values.captcha

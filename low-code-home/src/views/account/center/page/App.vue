@@ -11,41 +11,55 @@
         </a-form-item>
         <a-form-item >
           <a-button type="primary" style="margin-right: 10px" @click="searchDataSource">搜索</a-button>
-          <a-button>重置</a-button>
+          <a-button @click="resetDataSource">重置</a-button>
         </a-form-item>
       </a-form>
     </a-card>
     <a-list
       :grid="{ gutter: 24, lg: 3, md: 2, sm: 1, xs: 1 }"
       :pagination="pagination"
+      :loading="loading"
       :dataSource="dataSource">
       <a-list-item slot="renderItem" slot-scope="item">
         <a-card :hoverable="true">
           <a-card-meta>
-            <div style="margin-bottom: 3px" slot="title">{{ item.title }}</div>
-            <a-avatar class="card-avatar" slot="avatar" :src="item.avatar" size="small"/>
+            <div style="margin-bottom: 3px" slot="title">{{ item.sourceName }}</div>
+            <a-avatar class="card-avatar" slot="avatar" :src="item.sourceCover" size="small"/>
             <div class="meta-cardInfo" slot="description">
               <div>
                 <p>连接次数</p>
                 <p>
-                  <span>{{ item.activeUser }}</span>
+                  <span>{{ item.connectNum }}</span>
                 </p>
               </div>
               <div>
                 <p>数据库数量</p>
-                <p>{{ item.newUser | NumberFormat }}</p>
+                <p>{{ item.databaseNum | NumberFormat }}</p>
               </div>
             </div>
           </a-card-meta>
           <template class="ant-card-actions" slot="actions">
             <a>
-              <a-icon type="edit" @click="editDataSourceInfo"/>
+              <a-icon type="edit" @click="editDataSourceInfo(item.id)"/>
             </a>
             <a>
-              <i class="iconfont icon-lianjie_" @click="checkOutConnect"></i>
+              <a-tooltip placement="top">
+                <template slot="title">
+                  <span>测试连接</span>
+                </template>
+                <i class="iconfont icon-lianjie_" @click="checkOutConnect(item.id)"></i>
+              </a-tooltip>
             </a>
             <a>
-              <a-icon type="delete" @click="removeDataSourceInfo"/>
+              <a-popconfirm
+                :title="`确定要删除${item.sourceName}数据源吗?`"
+                ok-text="确定"
+                cancel-text="取消"
+                @confirm="confirm(item.id)"
+                @cancel="cancel"
+              >
+                <a-icon type="delete" style="color: #f37878"/>
+              </a-popconfirm>
             </a>
           </template>
         </a-card>
@@ -53,12 +67,12 @@
     </a-list>
     <!-- 修改数据源 -->
     <a-modal v-model="editDataSourceVisible" title="修改数据源配置" @ok="openDataSourceConfigInfo">
-      <EditDataSourceConfigInfo/>
+      <EditDataSourceConfigInfo :editDataSourceVisible="editDataSourceVisible" :dataSourceInfo="dataSourceInfo" ref="editDataSourceInfoRef"/>
     </a-modal>
 
     <!-- 添加数据源 -->
     <a-modal v-model="addDataSourceVisible" title="添加数据源配置" @ok="openAddDataSourceConfigInfo">
-      <AddDataSourceConfigInfo/>
+      <AddDataSourceConfigInfo :addDataSourceVisible="addDataSourceVisible" ref="addDataSourceConfigInfo"/>
     </a-modal>
   </div>
 </template>
@@ -67,7 +81,12 @@
 import { message } from 'ant-design-vue'
 import EditDataSourceConfigInfo from '@/views/account/center/EditDataSourceConfigInfo'
 import AddDataSourceConfigInfo from '@/views/account/center/AddDataSourceConfigInfo'
-import { listByCondition } from '@/api/datasource'
+import {
+  addDataSourceConfigInfo, connectDataSource, DataSourceDetailInfo,
+  editDataSourceConfigInfo,
+  listByCondition,
+  removeDataSourceInfo
+} from '@/api/datasource'
 export default {
   name: 'Article',
   components: { AddDataSourceConfigInfo, EditDataSourceConfigInfo },
@@ -76,91 +95,95 @@ export default {
       searchForm: {
         sourceName: ''
       },
+      loading: false,
       pagination: {
         onChange: page => {
           this.searchDataSource(page)
         },
         pageSize: 9
       },
-      dataSource: [
-        {
-          title: '人力资源',
-          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
-          activeUser: 71,
-          newUser: 8
-        },
-        {
-          title: '博客系统',
-          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
-          activeUser: 62,
-          newUser: 12
-        },
-        {
-          title: '低代码',
-          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
-          activeUser: 89,
-          newUser: 23
-        },
-        {
-          title: '图书管理系统',
-          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
-          activeUser: 25,
-          newUser: 11
-        },
-        {
-          title: '进销货系统',
-          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
-          activeUser: 11,
-          newUser: 6
-        },
-        {
-          title: 'RPM',
-          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
-          activeUser: 45,
-          newUser: 4
-        },
-        {
-          title: 'CSDN',
-          avatar: 'https://gw.alipayobjects.com/zos/rmsportal/WdGqmHpayyMjiEhcKoVE.png',
-          activeUser: 22,
-          newUser: 2
-        }
-      ],
+      dataSource: [],
       editDataSourceVisible: false,
-      addDataSourceVisible: false
+      addDataSourceVisible: false,
+      dataSourceInfo: {}
     }
   },
   mounted () {
     this.searchDataSource()
   },
   methods: {
-    async searchDataSource (page = 1) {
-      const userInfo = this.$store.getters.userInfo
+    async searchDataSource (page) {
+      this.loading = true
+      if (!page) {
+        page = 1
+      }
+      const userId = this.$store.getters.userInfo.userId
       const parameter = {
-        userId: userInfo.id,
         pageSize: this.pagination.pageSize,
         page: page,
-        sourceName: this.searchForm.sourceName
+        sourceName: this.searchForm.sourceName,
+        userId: userId
       }
       const { data } = await listByCondition(parameter)
+      this.dataSource = data.records
+      this.loading = false
+    },
+    resetDataSource () {
+      this.searchForm = {}
+      this.searchDataSource()
+    },
+    async checkOutConnect (id) {
+      const { data } = await connectDataSource(id)
       console.log(data)
+      if (data.result) {
+        message.success('连接成功')
+      } else {
+        message.error('连接失败')
+      }
     },
-    checkOutConnect () {
-      message.success('连接成功')
-    },
-    editDataSourceInfo () {
+    async editDataSourceInfo (id) {
+      const { data } = await DataSourceDetailInfo(id)
+      this.dataSourceInfo = data.dataSource
       this.editDataSourceVisible = true
     },
-    openDataSourceConfigInfo () {
+    async openDataSourceConfigInfo () {
+      const dataSource = this.$refs.editDataSourceInfoRef.dataSource
+      const { data } = await editDataSourceConfigInfo(dataSource)
+      if (data.isSuccess) {
+        message.success('更新成功')
+      } else {
+        message.error('更新失败')
+      }
+      this.searchDataSource()
       this.editDataSourceVisible = false
     },
     addDataSourceInfo () {
       this.addDataSourceVisible = true
     },
-    openAddDataSourceConfigInfo () {
-      this.addDataSourceVisible = false
+    async openAddDataSourceConfigInfo () {
+      const parameter = {
+        datasource: this.$refs.addDataSourceConfigInfo.datasourceInfo,
+        userId: this.$store.getters.userInfo.userId
+      }
+      const { data } = await addDataSourceConfigInfo(parameter)
+      if (data.isSuccess) {
+        message.success('新增成功')
+        this.searchDataSource()
+        this.addDataSourceVisible = false
+      }
     },
-    removeDataSourceInfo () {}
+    async confirm (id) {
+      const { data } = await removeDataSourceInfo(id)
+      if (data.isRemove) {
+        message.success('删除成功')
+        this.searchDataSource()
+      } else {
+        message.error('删除失败')
+      }
+    },
+    cancel () {
+      message.info('取消删除')
+    }
   }
 }
 </script>

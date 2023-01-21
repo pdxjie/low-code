@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-form class="data-source-form">
+    <a-form class="data-source-form" :form="datasourceInfo">
       <a-form-item
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
@@ -25,31 +25,31 @@
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
         label="数据源名称">
-        <a-input placeholder="请输入数据源名称"/>
+        <a-input v-model="datasourceInfo.sourceName" placeholder="请输入数据源名称"/>
       </a-form-item>
       <a-form-item
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
         label="IP">
-        <a-input placeholder="【默认】0.0.0.0"/>
+        <a-input v-model="datasourceInfo.sourceIp" placeholder="【默认】0.0.0.0"/>
       </a-form-item>
       <a-form-item
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
         label="端口号">
-        <a-input placeholder="【默认】3306"/>
+        <a-input v-model="datasourceInfo.sourcePort" placeholder="【默认】3306"/>
       </a-form-item>
       <a-form-item
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
         label="用户名">
-        <a-input placeholder="【默认】root"/>
+        <a-input v-model="datasourceInfo.sourceAccount" placeholder="【默认】root"/>
       </a-form-item>
       <a-form-item
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
         label="密码">
-        <a-input-password placeholder="请输入密码"/>
+        <a-input-password v-model="datasourceInfo.sourcePassword" placeholder="请输入密码"/>
       </a-form-item>
     </a-form>
     <a-drawer
@@ -88,6 +88,7 @@
 import LogoPicker from '@/views/account/center/LogoPicker'
 export default {
   name: 'AddDataSourceConfigInfo',
+  props: ['addDataSourceVisible'],
   components: { LogoPicker },
   data () {
     return {
@@ -97,7 +98,22 @@ export default {
       },
       loading: false,
       imageUrl: '',
-      logoVisible: false
+      logoVisible: false,
+      datasourceInfo: {
+        sourceCover: '',
+        sourceName: '',
+        sourceAccount: '',
+        sourcePassword: '',
+        sourcePort: ''
+      }
+    }
+  },
+  watch: {
+    addDataSourceVisible (nVal, oVal) {
+      if (nVal) {
+        this.datasourceInfo = {}
+        this.imageUrl = ''
+      }
     }
   },
   methods: {
@@ -109,6 +125,7 @@ export default {
     },
     choseSure () {
       this.imageUrl = this.$refs.choseIcon.iconUrl
+      this.datasourceInfo.sourceCover = this.$refs.choseIcon.iconUrl
       this.logoVisible = false
     }
   }
