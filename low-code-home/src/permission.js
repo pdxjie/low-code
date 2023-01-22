@@ -10,7 +10,7 @@ import { i18nRender } from '@/locales'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const allowList = ['login', 'register', 'registerResult', 'Workplace', 'BaseForm', 'Config'] // no redirect allowList
+const allowList = ['login', 'register', 'registerResult', 'Workplace', 'BaseForm', 'Config', 'Exception403'] // no redirect allowList
 const loginRoutePath = '/user/login'
 const defaultRoutePath = '/dashboard/workplace'
 
@@ -24,49 +24,17 @@ router.beforeEach((to, from, next) => {
       next({ path: defaultRoutePath })
       NProgress.done()
     } else {
-      // check login user.roles is null
-      // if (store.getters.roles.length === 0) {
-      //   // request login userInfo
-      //   // store
-      //   //   .dispatch('GetInfo')
-      //   //   .then(res => {
-      //   //     console.log('res', res)
-      //       // 根据用户权限信息生成可访问的路由表
-      //       store.dispatch('GenerateRoutes')// .then(() => {
-      //         // 动态添加可访问路由表
-      //         // VueRouter@3.5.0+ New API
-      //         resetRouter() // 重置路由 防止退出重新登录或者 token 过期后页面未刷新，导致的路由重复添加
-      //         store.getters.addRouters.forEach(r => {
-      //           router.addRoute(r)
-      //         })
-      //         // 请求带有 redirect 重定向时，登录自动重定向到该地址
-      //         const redirect = decodeURIComponent(from.query.redirect || to.path)
-      //         if (to.path === redirect) {
-      //           // set the replace: true so the navigation will not leave a history record
-      //           next({ ...to, replace: true })
-      //         } else {
-      //           // 跳转到目的路由
-      //           next({ path: redirect })
-      //         }
-      //       // })
-      //     // })
-      //     // .catch(() => {
-      //     //   notification.error({
-      //     //     message: '错误',
-      //     //     description: '请求用户信息失败，请重试'
-      //     //   })
-      //     //   // 失败时，获取用户信息失败时，调用登出，来清空历史保留信息
-      //     //   store.dispatch('Logout').then(() => {
-      //     //     next({ path: loginRoutePath, query: { redirect: to.fullPath } })
-      //     //   })
-      //     // })
-      // } else {
-      //   next()
-      // }
       store.dispatch('StaticRoutes')
       store.dispatch('GetInfo')
-
-      next()
+      if (to.path === '/data/manage') {
+        if (store.getters.userInfo.role === 'admin') {
+          next()
+        } else {
+          next({ path: '/exception' })
+        }
+      } else {
+        next()
+      }
     }
   } else {
     if (allowList.includes(to.name)) {
@@ -74,11 +42,14 @@ router.beforeEach((to, from, next) => {
       store.dispatch('StaticRoutes')
       next()
     } else {
-      // if (to.meta.permission[0] === 'admin') {
-      //   next({ path: '/exception/403' })
-      // } else {
-      message.warning('请先登录')
-      next({ path: loginRoutePath, query: { redirect: to.fullPath } })
+      console.log(to.path)
+      if (to.path === '/data/manage') {
+        next({ path: '/exception' })
+      } else {
+        message.warning('请先登录')
+        next({ path: loginRoutePath, query: { redirect: to.fullPath } })
+      }
+
       NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
     }
   }
