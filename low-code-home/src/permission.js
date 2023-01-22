@@ -26,7 +26,7 @@ router.beforeEach((to, from, next) => {
     } else {
       store.dispatch('StaticRoutes')
       store.dispatch('GetInfo')
-      if (to.path === '/data/manage') {
+      if (to.path === '/data/manage/home' || to.path === '/data/manage/operator' || to.path === '/data/manage/datasource') {
         if (store.getters.userInfo.role === 'admin') {
           next()
         } else {
@@ -43,7 +43,7 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       console.log(to.path)
-      if (to.path === '/data/manage') {
+      if (to.path === '/data/manage/home' || to.path === '/data/manage/operator' || to.path === '/data/manage/datasource') {
         next({ path: '/exception' })
       } else {
         message.warning('请先登录')

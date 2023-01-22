@@ -120,14 +120,35 @@ export const constantRouterMap = [
       },
       {
         path: '/data/manage',
-        name: 'manage',
-        component: () => import('@/views/Manage'),
-        meta: { title: '后台运维', icon: 'pull-request' }
+        redirect: '/data/manage/home',
+        component: RouteView,
+        meta: { title: '后台运维', icon: 'pull-request', permission: ['form'] },
+        children: [
+          {
+            path: '/data/manage/home',
+            name: 'Home',
+            component: () => import('@/views/Manage/Home'),
+            meta: { title: '分析中心' }
+          },
+          {
+            path: '/data/manage/operator',
+            name: 'Operator',
+            component: () => import('@/views/Manage/Operator'),
+            meta: { title: '用户管理' }
+          },
+          {
+            path: '/data/manage/datasource',
+            name: 'DataSource',
+            component: () => import('@/views/Manage/DataSource'),
+            meta: { title: '数据源管理' }
+          }
+        ]
       }
     ]
   },
   {
-    path: '/404',
-    component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
+    path: '*',
+    redirect: '/404',
+    hidden: true
   }
 ]
