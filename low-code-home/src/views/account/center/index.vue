@@ -81,7 +81,7 @@ export default {
       tabListNoTitle: [
         {
           key: 'app',
-          tab: '数据源(' + 10 + ')'
+          tab: '数据源'
         }
       ],
       noTitleKey: 'app'

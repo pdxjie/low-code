@@ -134,7 +134,6 @@ export default {
     },
     async checkOutConnect (id) {
       const { data } = await connectDataSource(id)
-      console.log(data)
       if (data.result) {
         message.success('连接成功')
       } else {

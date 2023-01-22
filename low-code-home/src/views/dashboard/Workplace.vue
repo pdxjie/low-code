@@ -17,23 +17,10 @@
                 </a-select-option>
               </a-select>
             </a-form-item>
-            <a-form-item label="后端框架">
+            <a-form-item label="后端模板">
               <a-select default-value="请选择" style="width: 120px" @change="handleChange">
                 <a-select-option v-for="(item,index) in endFrames" :key="index" :value="item">
                   {{ item }}
-                </a-select-option>
-              </a-select>
-            </a-form-item>
-            <a-form-item label="前端框架">
-              <a-select default-value="请选择" style="width: 120px" @change="handleChange">
-                <a-select-option value="element" :disabled="!hasToken">
-                  ElementUI
-                </a-select-option>
-                <a-select-option value="antd" :disabled="!hasToken">
-                  AntDesignUI
-                </a-select-option>
-                <a-select-option value="react" :disabled="!hasToken">
-                  React
                 </a-select-option>
               </a-select>
             </a-form-item>
