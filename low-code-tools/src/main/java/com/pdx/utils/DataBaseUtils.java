@@ -36,8 +36,6 @@ public class DataBaseUtils {
         customMap.put("MEDIUMINT","Integer");
         customMap.put("SMALLINT","Integer");
         customMap.put("tableRemovePrefixes","");
-
-
     }
 
 
@@ -186,13 +184,13 @@ public class DataBaseUtils {
     /**
      * 获取数据库中的表和字段构造实体类
      */
-    public static List<Table> getDbInfo(ConfigurationInfo db) throws Exception {
+    public static List<Table> getDbInfo(ConfigurationInfo db,String databaseName,List<String> tableNames) throws Exception {
         //获取连接
         Connection connection = getConnection(db);
         //获取元数据
         DatabaseMetaData metaData = connection.getMetaData();
         //获取当前数据库中的所有表
-        ResultSet tables = metaData.getTables("book", null, null, new String[]{"TABLE"});
+        ResultSet tables = metaData.getTables(databaseName, null, null, new String[]{"TABLE"});
         //表集合
         List<Table> list = new ArrayList<>();
 
@@ -201,6 +199,7 @@ public class DataBaseUtils {
             Table tab = new Table();
             //i.表名
             String tableName = tables.getString("TABLE_NAME");
+            if (tableNames.size() != 0 && tableNames.indexOf(tableName) == -1) continue;
             //ii.类名 去除tb_  bl_前缀
             String className = removePrefix(tableName);//User
             //iii.表描述

@@ -4,11 +4,13 @@ import com.pdx.utils.FileUtils;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import lombok.Data;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +19,7 @@ import java.util.Map;
  * @Date: 2023/01/09 2023/1/9
  * @Description:
  */
+@Data
 public class Generator {
     //模板路径
     private String templatePath;
@@ -57,17 +60,28 @@ public class Generator {
     private void executeGenerator(Map<String, Object> dataMap, File file) throws Exception{
         //文件路径的处理
         String templateFileName = file.getAbsolutePath().replace(this.templatePath,"");
-        String outFilePath = processTemplateString(templateFileName, dataMap);
+        String outFileName = processTemplateString(templateFileName, dataMap);
         //读取文件模板
-
+        Template template = configuration.getTemplate(templateFileName);
+        template.setOutputEncoding("UTF-8");
         //创建文件
-
+        File mkdir = FileUtils.mkdir(outPath, outFileName.replace("ftl","java"));
         //模板处理
+        FileWriter writer = new FileWriter(mkdir);
+        template.process(dataMap,writer);
+        writer.close();
     }
 
+    /**
+     * 处理模板字符串
+     * @param templateString
+     * @param dataModel
+     * @return
+     * @throws Exception
+     */
     public String processTemplateString(String templateString,Map<String,Object> dataModel) throws Exception{
         StringWriter outWriter = new StringWriter();
-        Template template = new Template("ts",new StringReader(templateString),configuration);
+        Template template = new Template("template",new StringReader(templateString),configuration);
         template.process(dataModel,outWriter);
         return outWriter.toString();
     }

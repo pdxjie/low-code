@@ -1,15 +1,11 @@
 package com.pdx.utils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.pdx.entity.ConfigurationInfo;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -24,12 +20,12 @@ public class PropertiesUtils {
      */
     public static void loadProperties() throws IOException {
         // 兼容Jar包外 处理配置文件
-        String filePath = System.getProperty("user.dir") + File.separator + "application.properties";
+        String filePath = System.getProperty("user.dir") + File.separator + "application.yaml";
         InputStream inStream;
         if (new File(filePath).exists()) {
             inStream = new FileInputStream(filePath);
         } else {
-            inStream = PropertiesUtils.class.getClassLoader().getResourceAsStream("application.properties");
+            inStream = PropertiesUtils.class.getClassLoader().getResourceAsStream("application.yaml");
         }
 
         Properties prop = new Properties();

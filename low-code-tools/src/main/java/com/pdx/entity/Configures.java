@@ -2,6 +2,7 @@ package com.pdx.entity;
 
 import com.pdx.utils.StringUtils;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Map;
  * @Description: 基础配置
  */
 @Data
+@Accessors(chain = true)
 public class Configures {
 
     /**
