@@ -41,4 +41,6 @@ public interface UserService extends IService<User> {
      * @return
      */
     Map<String, Object> getCodeInfo(String email);
+
+    Map<String, Object> listByCondition(String nickName,String beginTime,String endTime);
 }

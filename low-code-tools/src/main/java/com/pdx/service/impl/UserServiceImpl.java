@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -163,6 +164,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         redisTemplate.opsForValue().set(Constant.REGISTER_CODE+email,code,60, TimeUnit.SECONDS);
         Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("code",code);
+        return resultMap;
+    }
+
+    @Override
+    public Map<String, Object> listByCondition(String nickName,String beginTime,String endTime) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        if (StringUtils.isNotBlank(nickName)){
+            wrapper.like("nick_name",nickName);
+        }
+        if (StringUtils.isNotBlank(beginTime)){
+            wrapper.gt("register_time",beginTime);
+        }
+        if (StringUtils.isNotBlank(endTime)){
+            wrapper.lt("register_time",endTime);
+        }
+        wrapper.orderByDesc("register_time");
+        List<User> users = userMapper.selectList(wrapper);
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("users",users);
         return resultMap;
     }
 }
