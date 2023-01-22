@@ -90,6 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         UserDetailDto userDetailDto = new UserDetailDto();
         BeanUtils.copyProperties(user,userDetailDto);
         userDetailDto.setUserId(user.getId());
+        userDetailDto.setRole(user.getRole());
         userDetailDto.setTags(tags);
         Map<String,Object> resultMap = new HashMap<>();
         resultMap.put("userDetail",userDetailDto);
@@ -134,6 +135,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setDescription("只因"+nickName+"太美");
             user.setNickName(nickName);
             user.setPassword(encode);
+            user.setRole("user");
             user.setRegisterTime(new Timestamp(new Date().getTime()));
             user.setUpdateTime(new Timestamp(new Date().getTime()));
             int result = userMapper.insert(user);

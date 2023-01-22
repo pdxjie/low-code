@@ -22,4 +22,6 @@ public class UserDetailDto {
     private String description;
 
     private List<Tags> tags;
+
+    private String role;
 }

@@ -37,4 +37,6 @@ public class User {
     private Timestamp registerTime;
     //更新时间
     private Timestamp updateTime;
+    //角色名称
+    private String role;
 }
