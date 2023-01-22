@@ -18,7 +18,7 @@
               </a-select>
             </a-form-item>
             <a-form-item label="后端模板">
-              <a-select default-value="请选择" style="width: 120px" @change="handleChange">
+              <a-select default-value="请选择" style="width: 150px" @change="handleChange">
                 <a-select-option v-for="(item,index) in endFrames" :key="index" :value="item">
                   {{ item }}
                 </a-select-option>
@@ -61,7 +61,7 @@
               开始生成
             </a-button>
           </template>
-          <GeneratorCode :tableNames="tableNames" :options="options" :generatorCodeVisible="generatorCodeVisible"/>
+          <GeneratorCode ref="generatorRef" :tableNames="tableNames" :options="options" :generatorCodeVisible="generatorCodeVisible"/>
         </a-modal>
       </a-card>
       <BackTop :visibilityHeight="200"/>
@@ -77,6 +77,7 @@ import ConfigDataSource from '@/views/dashboard/ConfigDataSource'
 import GeneratorCode from '@/views/dashboard/GeneratorCode'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { DataSourceDetail, dataSources } from '@/api/datasource'
+import { generatorCode } from '@/api/code'
 export default {
   name: 'Workplace',
   components: {
@@ -89,7 +90,7 @@ export default {
       clientWidth: document.body.clientWidth,
       ConfigDataSourceVisible: false,
       generatorCodeVisible: false,
-      endFrames: ['MyBatis-Plus', 'Mybatis'],
+      endFrames: ['MybatisPlus-Template', 'Mybatis-Template'],
       dataBases: [],
       tableColumns,
       selectedRowKeys: [],
@@ -98,7 +99,8 @@ export default {
       tables: [],
       tableNames: [],
       hasToken: '',
-      dataSources: []
+      dataSources: [],
+      templatePath: ''
     }
   },
   computed: {
@@ -218,10 +220,27 @@ export default {
         this.generatorCodeVisible = true
       }
     },
-    generatorCodeOk () {
+    async generatorCodeOk () {
+      if (this.templatePath.trim() === '') {
+        message.warn('生成模板为空，请选择后继续操作')
+        return
+      }
+      const generatorConfig = this.$refs.generatorRef.generatorConfig
+      const datasource = this.$store.state.database.dataSource
+      const parameter = {
+        generatorConfig,
+        config: datasource,
+        databaseName: this.tableData.val,
+        templatePath: this.templatePath,
+        tableNames: this.tableNames.length === this.tableData.result ? [] : JSON.stringify(this.tableNames)
+      }
+      const data = await generatorCode(parameter)
+      console.log(data)
       message.success('代码生成成功')
     },
-    handleChange () {}
+    handleChange (val) {
+      this.templatePath = val
+    }
   }
 }
 </script>

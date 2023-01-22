@@ -10,10 +10,10 @@
         />
       </a-form-item>
       <a-form-item label="项目名称">
-        <a-input placeholder="请输入项目名称（英文）"/>
+        <a-input v-model="generatorConfig.project" placeholder="请输入项目名称（英文）"/>
       </a-form-item>
       <a-form-item label="包名">
-        <a-input placeholder="请输入包名（小写）"/>
+        <a-input v-model="generatorConfig.pPackage" placeholder="请输入包名（com.example.project）"/>
       </a-form-item>
       <a-form-item label="表名">
         <a-select
@@ -30,10 +30,10 @@
       <a-form-item label="类名样式">
         <a-tabs default-active-key="1" @change="callback">
           <a-tab-pane key="1" tab="驼峰命名">
-            <a-switch default-checked disabled @change="onChange" />
+            <a-switch default-checked disabled />
           </a-tab-pane>
           <a-tab-pane key="2" tab="自定义命名" force-render>
-            <a-input placeholder="填写需要去除表名前缀"/>
+            <a-input v-model="generatorConfig.customDesignate" placeholder="填写需要去除表名前缀(用英文逗号分隔)"/>
           </a-tab-pane>
         </a-tabs>
       </a-form-item>
@@ -52,7 +52,11 @@ export default {
   data () {
     return {
       generatorConfig: {
-        filePath: ''
+        filePath: '',
+        outPath: '',
+        project: '',
+        pPackage: '',
+        customDesignate: ''
       },
       tables: []
     }
@@ -77,7 +81,9 @@ export default {
   },
   methods: {
     loadData () {},
-    onChange () {},
+    onChange (val) {
+      this.generatorConfig.outPath = val[0] + '\\' + val[1]
+    },
     callback () {}
   }
 }
