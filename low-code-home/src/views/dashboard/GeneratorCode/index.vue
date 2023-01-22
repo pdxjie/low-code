@@ -20,7 +20,7 @@
           mode="multiple"
           disabled
           :maxTagCount="4"
-          :default-value="tableNames"
+          :default-value="tables"
           style="width: 100%"
         ></a-select>
       </a-form-item>
@@ -61,15 +61,19 @@ export default {
     generatorCodeVisible: {
       immediate: true,
       handler (newVal, oldVal) {
-        console.log(newVal, oldVal)
-        if (!newVal) {
-          this.tables = []
+        if (newVal) {
+          this.tables.length = 0
+          this.tableNames.forEach(item => {
+            this.tables.push(item.tableName)
+          })
         }
       }
     }
   },
-  mounted () {
-    console.log('gen', this.tableNames)
+  computed: {
+    choseTables () {
+      return this.$store.getters.choseTables
+    }
   },
   methods: {
     loadData () {},

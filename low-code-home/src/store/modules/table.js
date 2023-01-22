@@ -29,7 +29,8 @@ function getOnlineTableData () {
 const state = {
   currentTableData: getCurrentTableData(),
   onlineTableData: getOnlineTableData(),
-  currentDataSource: JSON.parse(localStorage.getItem('currentDataSource')) || {}
+  currentDataSource: JSON.parse(localStorage.getItem('currentDataSource')) || {},
+  choseTables: []
 }
 
 const actions = {
@@ -41,6 +42,9 @@ const actions = {
   },
   currentDataSourceData ({ commit }, data) {
     commit('SET_CURRENTDATASOURCE', data)
+  },
+  choseTableData ({ commit }, data) {
+    commit('SET_CHOSETABLEDATA', data)
   }
 }
 
@@ -74,6 +78,9 @@ const mutations = {
   SET_CURRENTDATASOURCE (state, data) {
     localStorage.removeItem('currentDataSource')
     localStorage.setItem('currentDataSource', JSON.stringify(data))
+  },
+  SET_CHOSETABLEDATA (state, data) {
+    state.choseTables = data
   }
 }
 

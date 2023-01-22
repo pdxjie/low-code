@@ -128,7 +128,6 @@ export default {
       immediate: true,
       handler (newVal, oldVal) {
         if (!newVal) {
-          console.log(newVal)
           this.tableNames = []
         }
       }
@@ -167,7 +166,6 @@ export default {
     },
     async handleDataSourceChange (val) {
       const { data } = await DataSourceDetail(val)
-      console.log(data.dataSource)
       this.$store.dispatch('table/currentDataSourceData', data.dataSource)
       const parameter = {
         ip: data.dataSource.sourceIp,
@@ -192,7 +190,6 @@ export default {
         val
       }
       this.$store.dispatch('table/currentTablesData', tableData)
-      console.log(result)
     },
     // 保存数据源连接
     handleOk () {
@@ -224,14 +221,13 @@ export default {
       if (this.selectedRowKeys.length <= 0) {
         message.warning('请选择需要生成代码的表')
       } else {
-        const names = this.tables.filter((item, index) => {
-          if (this.selectedRowKeys.includes(index)) {
-            return item.tableName
+        console.log(this.selectedRowKeys)
+        this.tableNames = this.$store.getters.tableData.result.filter((item, index) => {
+          if (this.selectedRowKeys.indexOf(index) !== -1) {
+            return item
           }
         })
-        names.forEach(item => {
-          this.tableNames.push(item.tableName)
-        })
+        this.$store.dispatch('table/choseTableData', this.tableNames)
         this.generatorCodeVisible = true
       }
     },
