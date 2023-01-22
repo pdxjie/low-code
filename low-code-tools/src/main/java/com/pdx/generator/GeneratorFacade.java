@@ -1,11 +1,9 @@
-package com.pdx.core;
+package com.pdx.generator;
 
 import com.pdx.entity.ConfigurationInfo;
 import com.pdx.entity.Configures;
-import com.pdx.entity.DataBase;
 import com.pdx.entity.Table;
 import com.pdx.utils.DataBaseUtils;
-import com.pdx.utils.PropertiesUtils;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.pdx.core;
+package com.pdx.generator;
 
 import com.pdx.utils.FileUtils;
 import freemarker.cache.FileTemplateLoader;
