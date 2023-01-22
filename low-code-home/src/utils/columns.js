@@ -104,3 +104,34 @@ export const tableColumns = [
     align: 'center'
   }
 ]
+
+export const userColumns = [
+  {
+    title: '序号',
+    dataIndex: 'key',
+    key: 'key',
+    align: 'center',
+    customRender: (text, record, index) => `${index + 1}`
+  },
+  {
+    title: '头像',
+    dataIndex: 'avatar',
+    align: 'center',
+    scopedSlots: { customRender: 'avatar' }
+  },
+  {
+    title: '昵称',
+    dataIndex: 'nickName',
+    align: 'center'
+  },
+  {
+    title: '邮箱',
+    dataIndex: 'email',
+    align: 'center'
+  },
+  {
+    title: '注册时间',
+    dataIndex: 'registerTime',
+    align: 'center'
+  }
+]

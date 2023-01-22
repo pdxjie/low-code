@@ -135,12 +135,6 @@ export const constantRouterMap = [
             name: 'Operator',
             component: () => import('@/views/Manage/Operator'),
             meta: { title: '用户管理' }
-          },
-          {
-            path: '/data/manage/datasource',
-            name: 'DataSource',
-            component: () => import('@/views/Manage/DataSource'),
-            meta: { title: '数据源管理' }
           }
         ]
       }
