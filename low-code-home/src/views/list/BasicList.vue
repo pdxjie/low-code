@@ -12,15 +12,14 @@
         </a-tooltip>
         <a-select
           v-if="hasToken"
-          allowClear
-          default-value="请选择数据源"
+          :default-value="currentDataSource.sourceName?currentDataSource.sourceName:'请选择数据源'"
           style="width: 130px"
-          @change="handleChangeDatabase">
-          <a-select-option v-for="(item,index) in dataSource" :key="index" :value="item">
-            {{ item }}
+          @change="handleChangeDataSource">
+          <a-select-option v-for="(item,index) in dataSource" :key="index" :value="item.id">
+            {{ item.sourceName }}
           </a-select-option>
         </a-select>
-        <a-select allowClear :default-value="onlineTableData.val?onlineTableData.val:'请选择数据库'" style="width: 130px" @change="handleChangeDatabase">
+        <a-select :default-value="onlineTableData.val?onlineTableData.val:'请选择数据库'" style="width: 130px" @change="handleChangeDatabase">
           <a-select-option v-for="(item,index) in databases" :key="index" :value="item">
             {{ item }}
           </a-select-option>
@@ -71,6 +70,7 @@ import ConfigFormEdit from '@/views/list/ConfigFormEdit'
 import ConfigFormPlus from '@/views/list/ConfigFormPlus'
 import { TableInfos, TableDetailInfo, CreateTable } from '@/api/database'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { dataSources } from '@/api/datasource'
 export default {
   name: 'StandardList',
   components: { ConfigFormPlus, ConfigFormEdit, SearchForm, BackTop },
@@ -91,6 +91,9 @@ export default {
   },
   mounted () {
     this.hasToken = localStorage.getItem(ACCESS_TOKEN)
+    if (this.hasToken) {
+      this.AllDataSource()
+    }
     this.allTables()
     const that = this
     window.onresize = () => {
@@ -106,14 +109,19 @@ export default {
     }
   },
   computed: {
-    // hasToken () {
-    //   return this.$store.getters.token
-    // },
     onlineTableData () {
       return this.$store.getters.onlineTableData
+    },
+    currentDataSource () {
+      return this.$store.getters.currentDataSource
     }
   },
   methods: {
+    async AllDataSource () {
+      const userId = this.$store.getters.userInfo.userId
+      const { data } = await dataSources(userId)
+      this.dataSource = data.dataSources
+    },
     allTables () {
       this.databases = this.$store.state.database.tables
     },
@@ -162,6 +170,9 @@ export default {
     },
     onSelectChange (keys) {
       this.selectedRowKeys = keys
+    },
+    async handleChangeDataSource (val) {
+
     },
     async handleChangeDatabase (val) {
       this.tableName = val
