@@ -235,8 +235,12 @@ export default {
         tableNames: this.tableNames.length === this.tableData.result ? [] : JSON.stringify(this.tableNames)
       }
       const data = await generatorCode(parameter)
-      console.log(data)
-      message.success('代码生成成功')
+      if (data.code === 200) {
+        message.success('代码生成成功')
+        this.generatorCodeVisible = false
+      } else {
+        message.error('代码生成失败，请检查字段数据类型')
+      }
     },
     handleChange (val) {
       this.templatePath = val

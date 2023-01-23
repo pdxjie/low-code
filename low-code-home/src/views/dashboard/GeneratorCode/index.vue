@@ -70,6 +70,14 @@ export default {
           this.tableNames.forEach(item => {
             this.tables.push(item.tableName)
           })
+        } else {
+          this.generatorConfig = {
+            filePath: '',
+            outPath: '',
+            project: '',
+            pPackage: '',
+            customDesignate: ''
+          }
         }
       }
     }
