@@ -1,7 +1,15 @@
 <template>
   <div class="generator-container">
     <div class="left">
-      <a-card title="代码生成">
+      <a-card >
+        <div slot="title">
+          <a-tooltip placement="top">
+            <template slot="title">
+              <span>点击全选，只会生成表格当前页的全部表结构的代码</span>
+            </template>
+            <a-icon type="question-circle" />
+          </a-tooltip>
+          代码生成</div>
         <div class="config">
           <a-button v-show="!hasToken" @click="configDataSource" type="primary">数据源配置</a-button>
           <a-select v-show="hasToken" :default-value="currentDataSource.sourceName?currentDataSource.sourceName:'请选择数据源'" style="width: 150px" @change="handleDataSourceChange">
