@@ -18,7 +18,7 @@ import java.util.*;
  * @Description: 前端控制层
  */
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/${ClassName?lower_case}/api")
 public class ${ClassName}Controller {
 
     @Autowired

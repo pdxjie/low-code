@@ -35,6 +35,7 @@ public class DataBaseUtils {
         customMap.put("BIT","Integer");
         customMap.put("MEDIUMINT","Integer");
         customMap.put("SMALLINT","Integer");
+        customMap.put("ENUM","String");
         customMap.put("tableRemovePrefixes","");
     }
 
@@ -201,7 +202,7 @@ public class DataBaseUtils {
             String tableName = tables.getString("TABLE_NAME");
             if (tableNames.size() != 0 && tableNames.indexOf(tableName) == -1) continue;
             //ii.类名 去除tb_  bl_前缀
-            String className = removePrefix(tableName);//User
+            String className = removePrefix(tableName);
             //iii.表描述
             String remarks = tables.getString("REMARKS");
             //iv.主键
@@ -224,7 +225,7 @@ public class DataBaseUtils {
                 Column cn = new Column();
                 //构造Column对象
                 //列名称
-                String columnName = columns.getString("COLUMN_NAME"); //user_id
+                String columnName = columns.getString("COLUMN_NAME");
                 cn.setColumnName(columnName);
                 //属性名 将_改成驼峰形式
                 String attName = StringUtils.toJavaVariableName(columnName);
@@ -260,13 +261,7 @@ public class DataBaseUtils {
                     pri = "PRI";
                 }
                 cn.setColumnKey(pri);
-                // 去过列是id或着version等基础列数据,不进行生成
-                if ("id".equals(attName) || "version".equals(attName) || "flag".equals(attName)
-                        || "createTime".equals(attName) || "createBy".equals(attName) ||
-                        "updateBy".equals(attName) || "updateTime".equals(attName)) {
-                } else {//不是以上数据进行生成
-                    columnList.add(cn);
-                }
+                columnList.add(cn);
             }
             columns.close();
             tab.setColumns(columnList);

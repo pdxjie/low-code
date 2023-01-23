@@ -1,8 +1,5 @@
 package ${pPackage}.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -13,14 +10,10 @@ import java.sql.Timestamp;
 * @Description: ${ClassName} 实体类
 */
 @Data
-@TableName(value = "${table.name}")
 public class ${ClassName} implements Serializable{
 
     <#list table.columns as column>
         //${column.columnComment}
-        <#if column.columnKey??>
-            @TableId(type = IdType.ID_WORKER_STR)
-        </#if>
         private ${column.columnType} ${column.columnName2};
 
     </#list>

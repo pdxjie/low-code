@@ -6,12 +6,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.pdx.entity.ConfigurationInfo;
 import com.pdx.entity.Configures;
 import com.pdx.entity.TableInfo;
-import com.pdx.generator.Generator;
-import com.pdx.generator.GeneratorFacade;
+import com.pdx.generator.GeneratorCore;
+import com.pdx.generator.GeneratorConfig;
 import com.pdx.utils.DataBaseUtils;
 import com.pdx.utils.Result;
 import com.pdx.utils.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,11 +53,11 @@ public class GeneratorController {
             //customMap.put("tableRemovePrefixes","");
             DataBaseUtils.customMap.put("tableRemovePrefixes",customDesignate);
         }
-        Generator generator = new Generator(property,outPath);
+        GeneratorCore generator = new GeneratorCore(property,outPath);
         Configures configures = new Configures(project,pPackage,"");
         configures.setPath1(pack[0]).setPath2(pack[1]).setPath3(pack[2]);
         configures.setPPackage(pPackage).setProject(project);
-        GeneratorFacade generatorFacade = new GeneratorFacade(property,outPath,configures,configurationInfo);
+        GeneratorConfig generatorFacade = new GeneratorConfig(property,outPath,configures,configurationInfo);
         generatorFacade.setDataBase(configurationInfo);
         generatorFacade.setGenerator(generator);
         generatorFacade.setDatabaseName(databaseName);

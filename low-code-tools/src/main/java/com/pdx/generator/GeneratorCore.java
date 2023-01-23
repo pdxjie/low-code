@@ -20,7 +20,7 @@ import java.util.Map;
  * @Description:
  */
 @Data
-public class Generator {
+public class GeneratorCore {
     //模板路径
     private String templatePath;
     //生成代码路径
@@ -28,7 +28,7 @@ public class Generator {
 
     private Configuration configuration;
 
-    public Generator(String templatePath, String outPath) throws Exception {
+    public GeneratorCore(String templatePath, String outPath) throws Exception {
         this.templatePath = templatePath;
         this.outPath = outPath;
         configuration = new Configuration();

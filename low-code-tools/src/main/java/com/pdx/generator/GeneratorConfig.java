@@ -1,14 +1,13 @@
 package com.pdx.generator;
 
+import com.pdx.entity.Column;
 import com.pdx.entity.ConfigurationInfo;
 import com.pdx.entity.Configures;
 import com.pdx.entity.Table;
 import com.pdx.utils.DataBaseUtils;
 import lombok.Data;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author: 派大星
@@ -16,7 +15,7 @@ import java.util.Map;
  * @Description:
  */
 @Data
-public class GeneratorFacade {
+public class GeneratorConfig {
 
     private String templatePath;
 
@@ -26,18 +25,18 @@ public class GeneratorFacade {
 
     private ConfigurationInfo dataBase;
 
-    private Generator generator;
+    private GeneratorCore generator;
 
     private String databaseName;
 
     private List<String> tableNames;
 
-    public GeneratorFacade(String templatePath, String outPath, Configures configures, ConfigurationInfo dataBase) throws Exception {
+    public GeneratorConfig(String templatePath, String outPath, Configures configures, ConfigurationInfo dataBase) throws Exception {
         this.templatePath = templatePath;
         this.outPath = outPath;
         this.configures = configures;
         this.dataBase = dataBase;
-        generator = new Generator(templatePath,outPath);
+        generator = new GeneratorCore(templatePath,outPath);
     }
 
     public void generatorByDataBase() throws Exception {
@@ -61,6 +60,7 @@ public class GeneratorFacade {
     private Map<String, Object> getDataModel(Table table) {
         Map<String,Object> dataModel = new HashMap<>();
         dataModel.putAll(DataBaseUtils.customMap);
+        table.setColumns(ridRepeat(table.getColumns()));
         dataModel.put("table",table);
         dataModel.putAll(this.configures.getSettingMap());
         dataModel.put("ClassName",table.getName2());
@@ -68,5 +68,17 @@ public class GeneratorFacade {
         dataModel.put("databaseName",databaseName);
         return dataModel;
     }
+
+    public static List<Column> ridRepeat(List<Column> list) {
+        List<Column> listNew = new ArrayList<Column>();
+        Set<String> set = new HashSet();
+        for (Column column : list) {
+            if (set.add(column.getColumnName2())){
+                listNew.add(column);
+            }
+        }
+        return listNew;
+    }
+
 
 }
