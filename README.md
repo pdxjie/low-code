@@ -12,8 +12,8 @@
 
 |  子项目   | 描述  | 目录地址 | 
 |  ----  | ----  | ---- |
-| <a href="https://github.com/pdxjie/low-code/tree/master/low-code-home">🛸低代码生成器前端视图</a>  | 单元格 | <a href="https://github.com/pdxjie/low-code/tree/master/low-code-home">low-code-home</a>
-| <a href="https://github.com/pdxjie/low-code/tree/master/low-code-tools">🛰️低代码生成器后端服务</a>  | 单元格 | <a href="https://github.com/pdxjie/low-code/tree/master/low-code-tools">low-code-tools</a>
+| <a href="https://github.com/pdxjie/low-code/tree/master/low-code-home">🛸低代码生成器前端视图</a>  | 可视化配置数据源以及代码生成主页 | <a href="https://github.com/pdxjie/low-code/tree/master/low-code-home">low-code-home</a>
+| <a href="https://github.com/pdxjie/low-code/tree/master/low-code-tools">🛰️低代码生成器后端服务</a>  | 代码生成业务逻辑 | <a href="https://github.com/pdxjie/low-code/tree/master/low-code-tools">low-code-tools</a>
 
 低代码生成器问世的目的是为了解决项目初期为搭建基础架构时的繁琐而开发出的网站，以 <strong>" 帮助大家更快的开发出后端服务，提高开发效率 "</strong> 为目标的一种解决方案。
 
