@@ -1,5 +1,8 @@
+<div align="center">
+  <img src="https://raw.githack.com/pdxjie/low-code/master/asssets/code-download.svg" style="width:100px;height:100px;">
+</div>
 <p align="center">
- <?xml version="1.0" encoding="UTF-8"?><svg width="100" height="40" style="margin-left: 50px;" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 12L4 24.4322L16 36" stroke="#0076a7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M32 12L44 24.4322L32 36" stroke="#0076a7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 17V31" stroke="#0076a7" stroke-width="4" stroke-linecap="round"/><path d="M18 25L24 31L30 25" stroke="#0076a7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
  <h2 align="center">低代码生成器</h2>
  <p align="center">支持可视化配置数据源、在线创建数据库表结构、指定代码生成路径</p>
 </p>
@@ -29,10 +32,12 @@
 在实习过程中，总是避免不了被分配到一些基础的增删改查接口的编写任务，往往这种任务是最没有价值，且非常耗费时间的一件事情，
 不过好在现在也是有很多优秀逆向工程插件以及想Mybatis-Plus这样优秀的ORM框架可以帮助我们来完成这项工作，但是每次使用时都要进行
 或多或少的配置，在重复进行类似的工作后，不由得让我陷入沉思。
-
+<br>
+<br>
 在完成老师布置的课设任务时，亦是如此，学校中的课设任务往往是一些简单的增删改查接口的实现，即使简单，可是对于基础薄弱的同学来说
 也是一种挑战。
-
+<br>
+<br>
 在意识到这些问题后，作为一个开发人员，我可以做些什么呢？这些问题无疑是真是存在的，但是又当如何解决或者说如何去降低这类任务的实践
 难度，于是带着这些问题和想法，经过一段时间的煎熬，终于完成了低代码生成器的第一个版本，也同样欢迎大家来体验平台的操作过程，如遇到问题，
 还希望大家向我提出issues，并且项目也是全部开源，可供大家学习使用！觉得不错的同学，求个star，分享给自己身边的朋友吧！
