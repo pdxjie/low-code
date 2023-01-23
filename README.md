@@ -41,8 +41,8 @@
 
 
 - <a href="https://github.com/pdxjie/low-code">低代码生成器——代码生成页面</a>
-![img.png](asssets/img.png)
-
+![img.png](asssets/config.png)
+![img.png](asssets/generator.png)
 
 - <a href="https://github.com/pdxjie/low-code">低代码生成器——Online配置页面</a>
 ![img.png](asssets/online.png)
