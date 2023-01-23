@@ -36,6 +36,7 @@ public class DataBaseUtils {
         customMap.put("MEDIUMINT","Integer");
         customMap.put("SMALLINT","Integer");
         customMap.put("ENUM","String");
+        customMap.put("DECIMAL","Integer");
         customMap.put("tableRemovePrefixes","");
     }
 
