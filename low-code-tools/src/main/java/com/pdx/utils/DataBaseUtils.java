@@ -43,7 +43,7 @@ public class DataBaseUtils {
 
     //获取数据库连接
     public static Connection getConnection(ConfigurationInfo configurationInfo) throws Exception {
-        String url = String.format("jdbc:mysql://%s:%s?useUnicode=true&characterEncoding=utf8", configurationInfo.getIp(), configurationInfo.getPort());
+        String url = String.format("jdbc:mysql://%s:%s?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8", configurationInfo.getIp(), configurationInfo.getPort());
         Properties props = new Properties();
         props.put("remarksReporting", "true");//获取数据库的备注信息
         props.put("user", configurationInfo.getLoginName());
