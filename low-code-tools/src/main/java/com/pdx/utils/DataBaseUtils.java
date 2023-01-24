@@ -1,6 +1,7 @@
 package com.pdx.utils;
 
 import com.pdx.entity.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.*;
@@ -10,6 +11,7 @@ import java.util.*;
  * @Date: 2023/01/09 2023/1/9
  * @Description: 数据库处理工具类
  */
+@Slf4j
 public class DataBaseUtils {
     //获取到mysql中所有的数据库名称
 
@@ -43,12 +45,13 @@ public class DataBaseUtils {
 
     //获取数据库连接
     public static Connection getConnection(ConfigurationInfo configurationInfo) throws Exception {
-        String url = String.format("jdbc:mysql://%s:%s?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8", configurationInfo.getIp(), configurationInfo.getPort());
+        String url = String.format("jdbc:mysql://%s:%s?useUnicode=true&characterEncoding=utf8", configurationInfo.getIp(), configurationInfo.getPort());
         Properties props = new Properties();
         props.put("remarksReporting", "true");//获取数据库的备注信息
         props.put("user", configurationInfo.getLoginName());
         props.put("password", configurationInfo.getPassword());
         Class.forName(configurationInfo.getDriver());//注册驱动
+        log.info("props:{}",props);
         return DriverManager.getConnection(url, props);
     }
 
