@@ -66,3 +66,51 @@
 
 - <a href="https://github.com/pdxjie/low-code">低代码生成器——新增数据源配置页面</a>
 ![img.png](asssets/datasource.png)
+
+<h2>本地内网映射</h2>
+
+如果需要连接本地MySQL生成代码，由于本地属于局域网，无法在上线服务中获取本地MySQL连接，所以需要采用内网ip映射。
+
+接下来就简单介绍一下作者使用的nat123内网ip映射工具的操作步骤：
+
+目的：内网使用nat123端口映射之非网站应用映射，将内网mysql数据库访问地址，映射到外网，实现外网的访问。
+
+- 确保内网应用正常
+  
+  明确内网mysql数据库访问地址，并确保mysql数据库服务正常。如本地mysql数据库访问地址是localhost:3306
+
+![img.png](asssets/connectTest.png )
+
+-  nat123端口映射之非网站应用映射
+   
+   在mysql数据库服务器局域网内安装nat123客户端，并使用它
+
+    nat123软件百度云盘：https://pan.baidu.com/s/1T3FObKYLcTeWC2zALbXpNg 提取码：1234 
+   
+   大家可自行下载或使用其他工具
+       
+
+
+![img.png](asssets/nat123.png)
+
+- 使用自己的帐号登录。如没有帐号，可以“注册帐号”进入网站进行注册
+
+![img.png](asssets/login.png)
+
+主面板/端口映射列表/添加映射
+
+![img.png](asssets/port.png)
+
+设置映射信息：选择非网站应用映射类型。填写内网mysql地址端口，和外网访问的域名。可以使用自己的域名，也可以使用免费二级域名。外网端口在添加映射时，会自动分配一个可用端口，不用更改。将鼠标放在输入框有向导提示
+
+![img.png](asssets/nconfig.png)
+
+添加映射后，可查看映射状态。将鼠标放在映射图标上有提示当前状态信息。新添加映射一般几分钟内生效
+
+![img.png](asssets/show.png)
+
+- 外网访问使用映射后的域名地址
+
+    映射正常后，在外网访问时，使用映射后的外网地址（域名和外网端口）即可
+
+![img.png](asssets/success.png)
