@@ -60,7 +60,15 @@
           <ConfigDataSource ref="checkOutConn"/>
         </a-modal>
         <!-- 生成代码配置 -->
-        <a-modal width="680px" v-model="generatorCodeVisible" title="生成代码配置" on-ok="handleOk">
+        <a-modal width="680px" v-model="generatorCodeVisible" on-ok="handleOk">
+          <div slot="title">
+            <a-tooltip placement="top">
+              <template slot="title">
+                <span>代码默认生成路径为本地D盘</span>
+              </template>
+              <a-icon type="question-circle" />
+            </a-tooltip>
+            代码生成</div>
           <template slot="footer">
             <a-button key="back" @click="()=>generatorCodeVisible=false">
               取消
@@ -131,6 +139,7 @@ export default {
     }
   },
   mounted () {
+    this.openNotificationWithIcon()
     this.hasToken = localStorage.getItem(ACCESS_TOKEN)
     // 用户已登录再执行
     if (this.hasToken) {
@@ -147,6 +156,13 @@ export default {
     }
   },
   methods: {
+    openNotificationWithIcon () {
+      this.$notification['warning']({
+        message: '温馨提示',
+        description:
+          `如果连接本地Mysql数据库，请使用nat123配置内网ip映射，具体操作教程请前往本站GitHub仓库`
+      })
+    },
     async AllDataSource () {
       const userId = this.$store.getters.userInfo.userId
       const { data } = await dataSources(userId)
@@ -196,7 +212,7 @@ export default {
           this.allTables()
           this.ConfigDataSourceVisible = false
         } else {
-          message.error('连接失败，请核查数据源信息')
+          message.error('连接失败，请核查数据源信息或nat123是否开启')
           this.ConfigDataSourceVisible = true
         }
       })

@@ -46,7 +46,7 @@ const actions = {
         sessionStorage.setItem('dataSource', JSON.stringify(data))
       }
     } else {
-      message.error('连接失败，请核查数据源信息')
+      message.error('连接失败，请核查数据源信息或nat123是否开启')
     }
   },
   /**

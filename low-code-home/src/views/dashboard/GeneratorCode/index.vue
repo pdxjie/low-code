@@ -5,7 +5,8 @@
         <Cascader
           :options="options"
           :load-data="loadData"
-          placeholder="请选择代码生成目录"
+          disabled
+          placeholder="请选择代码生成目录(本地启动可用)"
           @change="onChange"
         />
       </a-form-item>

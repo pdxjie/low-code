@@ -112,6 +112,7 @@ const vueConfig = {
   },
 
   devServer: {
+    allowedHosts: 'all',
     proxy: {
       '/api': {
         target: 'http://localhost:8088/',
