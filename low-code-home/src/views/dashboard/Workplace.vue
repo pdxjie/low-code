@@ -45,7 +45,15 @@
         <!-- 操作区 -->
         <a-button class="generator-code" type="primary" @click="generatorCode">生成代码配置</a-button>
         <!-- 数据源配置 -->
-        <a-modal width="680px" v-model="ConfigDataSourceVisible" title="配置数据源" on-ok="handleOk">
+        <a-modal width="680px" v-model="ConfigDataSourceVisible" on-ok="handleOk">
+          <div slot="title">
+            <a-tooltip placement="top">
+              <template slot="title">
+                <span>连接本地MySQL服务需要进行内网ip映射</span>
+              </template>
+              <a-icon type="question-circle" />
+            </a-tooltip>
+            配置数据源</div>
           <template slot="footer">
             <a-button key="back" @click="()=>ConfigDataSourceVisible=false">
               取消
@@ -68,7 +76,7 @@
               </template>
               <a-icon type="question-circle" />
             </a-tooltip>
-            代码生成</div>
+            生成代码配置</div>
           <template slot="footer">
             <a-button key="back" @click="()=>generatorCodeVisible=false">
               取消
