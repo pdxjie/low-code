@@ -33,7 +33,11 @@ public class GeneratorController {
         JSONObject parameter = jsonObject.getJSONObject("config");
         ConfigurationInfo configurationInfo = JSONObject.toJavaObject(parameter, ConfigurationInfo.class);
         JSONObject generatorConfig = jsonObject.getJSONObject("generatorConfig");
+        //线上不可自定义代码生成路径，默认生成D盘
         String outPath = generatorConfig.getString("outPath");
+        if (StringUtils.isBlank(outPath)){
+            outPath = "D:\\";
+        }
         String templatePath = jsonObject.getString("templatePath");
         String pPackage = generatorConfig.getString("pPackage");
         List<String> tableInfos = new ArrayList<>();
