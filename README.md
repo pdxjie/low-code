@@ -4,7 +4,7 @@
 <p align="center">
 
  <h2 align="center">低代码生成器</h2>
- <p align="center">支持可视化配置数据源、在线创建数据库表结构、指定代码生成路径</p>
+ <p align="center">支持可视化配置数据源、在线创建数据库表结构、指定代码生成路径、SpringBoot+Vue前端分离项目</p>
 </p>
 
 > 默认代码生成路径为本机D盘
