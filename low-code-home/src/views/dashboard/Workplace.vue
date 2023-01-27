@@ -27,8 +27,20 @@
             </a-form-item>
             <a-form-item label="后端模板">
               <a-select default-value="请选择" style="width: 150px" @change="handleChange">
-                <a-select-option v-for="(item,index) in endFrames" :key="index" :value="item">
-                  {{ item }}
+                <!--                <a-select-option v-for="(item,index) in endFrames" :key="index" :value="item">-->
+                <!--                  {{ item }}-->
+                <!--                </a-select-option>-->
+                <a-select-option value="MybatisPlus-Template">
+                  MybatisPlus-Template
+                </a-select-option>
+                <a-select-option value="Mybatis-Template">
+                  Mybatis-Template
+                </a-select-option>
+                <a-select-option :disabled="!hasToken" value="MybatisPlus+Vue">
+                  MybatisPlus+Vue
+                </a-select-option>
+                <a-select-option :disabled="!hasToken" value="Mybatis+Vue">
+                  Mybatis+Vue
                 </a-select-option>
               </a-select>
             </a-form-item>
@@ -275,6 +287,7 @@ export default {
       }
     },
     handleChange (val) {
+      console.log(val)
       this.templatePath = val
     }
   }
