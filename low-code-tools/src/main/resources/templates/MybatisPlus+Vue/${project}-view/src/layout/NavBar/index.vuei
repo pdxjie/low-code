@@ -1,0 +1,74 @@
+<template>
+  <div>
+    <a-layout-header>
+      <div class="nav-left">
+        <a-icon
+          class="trigger icon"
+          :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+          @click="ClickCollapsed"
+        />
+      </div>
+      <div class="nav-right">
+        <ScreenFull class="full-screen"/>
+        <iframe allowTransparency="true" frameBorder="0" width="180" height="36" scrolling="no"
+                src="//tianqi.2345.com/plugin/widget/index.htm?s=3&z=2&t=0&v=0&d=1&bd=0&k=&f=&ltf=009944&htf=cc0000&q=1&e=1&a=1&c=57083&w=180&h=36&align=center"/>
+        <a-dropdown :trigger="['click']">
+          <a-avatar size="large" icon="user" />
+          <a-menu slot="overlay">
+            <a-menu-item>
+              <a>系统设置</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a>个人中心</a>
+            </a-menu-item>
+            <a-menu-divider />
+            <a-menu-item @click="logout">
+              <a>退出登录</a>
+            </a-menu-item>
+          </a-menu>
+        </a-dropdown>
+      </div>
+    </a-layout-header>
+  </div>
+</template>
+
+<script>
+import ScreenFull from '@/components/ScreenFull'
+export default {
+  name: 'NavBar',
+  components: { ScreenFull },
+  computed: {
+    collapsed () {
+      return this.$store.getters.collapsed
+    }
+  },
+  methods: {
+    ClickCollapsed () {
+      this.$store.commit('system/SETCOLLAPSED')
+    },
+    logout(){
+          this.$router.push({path:"/login"})
+    }
+  }
+}
+</script>
+
+<style lang="less" scoped>
+::v-deep .ant-layout-header {
+  background-color: #FFF;
+  padding: 0 10px;
+  display: flex;
+  justify-content: space-between;
+  .icon {
+    font-size: 20px;
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .full-screen {
+      margin-top: 6px;
+    }
+  }
+}
+</style>

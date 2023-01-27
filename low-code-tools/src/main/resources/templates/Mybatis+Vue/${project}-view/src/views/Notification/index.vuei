@@ -1,0 +1,96 @@
+<template>
+  <div>
+    <a-card title="通知提示框" class="button-wrap">
+      <a-button type="primary" @click="openNotification">
+        普通提示框
+      </a-button>
+      <a-button type="primary" @click="openCustomNotification">
+        自定义图标
+      </a-button>
+    </a-card>
+
+    <a-card title="提示框位置" class="button-wrap">
+      <a-button type="primary" @click="openPositionNotification('topLeft')">
+        <a-icon type="radius-upleft" />
+        左上
+      </a-button>
+      <a-button type="primary" @click="openPositionNotification('topRight')">
+        <a-icon type="radius-upright" />
+        右上
+      </a-button>
+      <a-button type="primary" @click="openPositionNotification('bottomLeft')">
+        <a-icon type="radius-bottomleft" />
+        左下
+      </a-button>
+      <a-button type="primary" @click="openPositionNotification('bottomRight')">
+        <a-icon type="radius-bottomright" />
+        右下
+      </a-button>
+    </a-card>
+
+    <a-card title="带图标的提示框" class="button-wrap">
+      <a-button type="primary" @click="() => openLogoNotificationWithIcon('success')">
+        Success
+      </a-button>
+      <a-button type="primary" @click="() => openLogoNotificationWithIcon('info')">
+        Info
+      </a-button>
+      <a-button type="primary" @click="() => openLogoNotificationWithIcon('warning')">
+        Warning
+      </a-button>
+      <a-button type="primary" @click="() => openLogoNotificationWithIcon('error')">
+        Error
+      </a-button>
+    </a-card>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Notification',
+  methods: {
+    openNotification () {
+      this.$notification.open({
+        message: '普通提示框',
+        description:
+          '欢迎来到Bike Share',
+        onClick: () => {
+          console.log('Notification Clicked!')
+        }
+      })
+    },
+    openCustomNotification () {
+      this.$notification.open({
+        message: '自定义图标',
+        description:
+          '欢迎来到Bike Share',
+        icon: <a-icon type="smile" style="color: #108ee9" />
+      })
+    },
+    openPositionNotification (placement) {
+      this.$notification.open({
+        message: 'Notification '+placement,
+        description:
+          '欢迎来到Bike Share',
+        placement
+      })
+    },
+    openLogoNotificationWithIcon (type) {
+      this.$notification[type]({
+        message: 'Notification Title',
+        description:
+          '欢迎来到Bike Share'
+      })
+    }
+  }
+}
+</script>
+
+<style lang="less" scoped>
+.button-wrap {
+  margin-bottom: 10px;
+  button {
+    margin-right: 10px;
+  }
+}
+</style>

@@ -1,0 +1,82 @@
+<template>
+  <div>
+    <a-row :gutter="10">
+      <a-col :span="6">
+        <a-card >
+          <Detail title="总销售额" count="￥ 123456">
+            <!--插槽-->
+            <template slot="charts">
+              <div class="content">
+                <span>周同比&nbsp;&nbsp;47.79% <svg t="1671693185958" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5020" width="16" height="16"><path d="M512 405.333333L298.666667 618.666667h426.666666L512 405.333333z" fill="#1afa29" p-id="5021" /></svg></span>
+                <span>日同比&nbsp;&nbsp;17.19% <svg t="1671693270630" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6155" width="16" height="16"><path d="M512 618.666667L298.666667 405.333333h426.666666L512 618.666667z" fill="#d81e06" p-id="6156" /></svg></span>
+              </div>
+            </template>
+            <template slot="footer">
+              <span>日销售额 ￥ 1234</span>
+            </template>
+          </Detail>
+        </a-card>
+      </a-col>
+      <a-col :span="6">
+        <a-card >
+          <Detail title="访问量" count="88460">
+            <template slot="charts">
+              <line-chart />
+            </template>
+            <template slot="footer">
+              <span>日访问量 2345</span>
+            </template>
+          </Detail>
+        </a-card>
+      </a-col>
+      <a-col :span="6">
+        <a-card >
+          <Detail title="支付笔数" count="88460">
+            <template slot="charts">
+              <bar-chart />
+            </template>
+            <template slot="footer">
+              <span>转换率 59%</span>
+            </template>
+          </Detail>
+        </a-card>
+      </a-col>
+      <a-col :span="6">
+        <a-card >
+          <Detail title="运营活动效果" count="78%">
+            <template slot="charts">
+              <progress-charts />
+            </template>
+            <template slot="footer">
+              <div class="content">
+                <span>周同比&nbsp;&nbsp;47.79% <svg t="1671693185958" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5020" width="16" height="16"><path d="M512 405.333333L298.666667 618.666667h426.666666L512 405.333333z" fill="#1afa29" p-id="5021" /></svg></span>
+                <span>日同比&nbsp;&nbsp;17.19% <svg t="1671693270630" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6155" width="16" height="16"><path d="M512 618.666667L298.666667 405.333333h426.666666L512 618.666667z" fill="#d81e06" p-id="6156" /></svg></span>
+              </div>
+            </template>
+          </Detail>
+        </a-card>
+      </a-col>
+    </a-row>
+  </div>
+</template>
+
+<script>
+import Detail from '@/views/Home/Card/Detail'
+import LineChart from '@/views/Home/Card/lineChart'
+import BarChart from '@/views/Home/Card/barChart'
+import ProgressCharts from '@/views/Home/Card/progressCharts'
+export default {
+  name: 'Card',
+  components: { ProgressCharts, BarChart, LineChart, Detail }
+}
+</script>
+
+<style scoped>
+  .content {
+    display: flex;
+    justify-content: space-around;
+  }
+  .content span {
+    display: block;
+  }
+</style>

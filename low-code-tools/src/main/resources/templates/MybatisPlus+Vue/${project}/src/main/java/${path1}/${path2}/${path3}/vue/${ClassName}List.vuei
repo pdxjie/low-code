@@ -1,0 +1,218 @@
+<template>
+  <div>
+    <a-card>
+      <a-form layout="inline" class="ant-advanced-search-form" :form="SearchModel" @submit="handleSearch">
+        <a-row :gutter="24">
+           <#list table.columns as po>
+            <#if po.columnName2 !='id'>
+                  <a-col
+                    :span="8"
+                    :style="{ display: ${po_index} < count ? 'block' : 'none' }"
+                  >
+                        <a-form-item label="${po.columnComment}">
+                          <a-input
+                            v-model="SearchModel.${po.columnName2}"
+                            placeholder="请输入${po.columnComment}"
+                          />
+                        </a-form-item>
+                  </a-col>
+              </#if>
+          </#list>
+        </a-row>
+        <a-row>
+          <a-col :span="24" :style="{ textAlign: 'right' }">
+            <a-button type="primary" html-type="submit">
+              搜索
+            </a-button>
+            <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
+              重置
+            </a-button>
+            <a :style="{ marginLeft: '8px', fontSize: '12px' }" @click="toggle">
+              Collapse <a-icon :type="expand ? 'up' : 'down'" />
+            </a>
+          </a-col>
+        </a-row>
+      </a-form>
+    </a-card>
+    <a-card class="button-wrap">
+      <a-button @click="create${ClassName}" icon="plus" type="primary">新增</a-button>
+      <a-table
+        class="list-table"
+        bordered
+        :pagination="false"
+        :rowKey="(record)=>record.id"
+        :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+        :data-source="data"
+        :columns="columns"
+      >
+        <template slot="action" slot-scope="text, record">
+          <a-button type="primary" class="circle" shape="circle" @click="edit${ClassName}(record)" icon="edit"/>
+          <a-popconfirm
+            v-if="data.length"
+            title="确定要删除吗?"
+            @confirm="() => onDelete(record)"
+          >
+            <a-button type="danger" ghost class="circle" shape="circle" icon="delete"/>
+          </a-popconfirm>
+        </template>
+      </a-table>
+      <!--分页组件-->
+      <a-pagination style="text-align: center;margin-top: 10px" :default-current="1" :total="total" @change="changePage" />
+      <!--创建-->
+      <a-modal v-model="createVisible" title="创建" width="60%" on-ok="${ClassName}CreateHandleOk">
+        <template slot="footer">
+          <a-button key="back" @click="()=>createVisible = false">
+            取消
+          </a-button>
+          <a-button key="submit" type="primary" @click="submitCreateRequest">
+            确认
+          </a-button>
+        </template>
+        <Create${ClassName}Form ref="createRef"/>
+      </a-modal>
+      <!--修改-->
+      <a-modal v-model="updateVisible" title="修改" width="60%" on-ok="${ClassName}UpdateHandleOk">
+          <template slot="footer">
+            <a-button key="back" @click="()=>updateVisible = false">
+              取消
+            </a-button>
+            <a-button key="submit" type="primary" @click="submitUpdateRequest">
+              确认
+            </a-button>
+          </template>
+          <Update${ClassName}Form :${ClassName}Info="${ClassName}Info" :updateVisible="updateVisible" ref="updateRef"/>
+       </a-modal>
+    </a-card>
+  </div>
+</template>
+
+<script>
+import { message } from 'ant-design-vue'
+import Create${ClassName}Form from './components/Create${ClassName}Form'
+import Update${ClassName}Form from './components/Update${ClassName}Form'
+export default {
+  name: '${ClassName}',
+  components: { Create${ClassName}Form, Update${ClassName}Form },
+  data () {
+    return {
+      SearchModel: {},
+      expand: false,
+      columns: [
+        {
+          title: '#',
+          dataIndex: '',
+          key:'rowIndex',
+          width:60,
+          align:"center",
+          customRender:function (t,r,index) {
+            return parseInt(index)+1;
+          }
+         },
+        <#list table.columns as po>
+         <#if po.columnName !='id'>
+         {
+          title: '${po.columnComment}',
+          align: "center",
+          dataIndex: '${po.columnName2}'
+         },
+       </#if>
+      </#list>
+        {
+          title: '操作',
+          dataIndex: 'action',
+          align:"center",
+          scopedSlots: { customRender: 'action' },
+        }
+      ],
+      data: [],
+      selectedRowKeys: [],
+      createVisible: false,
+      updateVisible: false,
+      ${ClassName}Info: {},
+      total: 0
+    }
+  },
+  mounted () {
+    this.handleSearch()
+  },
+  computed: {
+      count() {
+        return this.expand ? 12 : 7;
+      },
+  },
+  methods: {
+    //重置搜索表单
+    handleReset(){
+        this.SearchModel = {}
+    },
+    changePage(val){
+       this.handleSearch(val)
+    },
+    async handleSearch(page=1) {
+      const { data } = await this.$axios.post('/${ClassName?lower_case}/api/selectPage?pageNo=' + page + '&pageSize=' + 10, this.SearchModel)
+      if (data.code === 1) {
+          this.data = data.data.records
+          this.total = data.data.total
+      }
+    },
+    create${ClassName}(){
+      this.createVisible = true
+    },
+    //添加${ClassName}
+    submitCreateRequest() {
+      const ${ClassName?lower_case}Info = this.$refs.createRef.${ClassName}model
+      this.$axios.post('/${ClassName?lower_case}/api/insert', ${ClassName?lower_case}Info).then(res => {
+        if (res.data.code === 1) {
+          message.success('添加成功')
+          this.createVisible = false
+          this.handleSearch()
+        }
+      })
+    },
+    edit${ClassName}(record){
+        this.$axios.get('/${ClassName?lower_case}/api/selectByKey?id='+record.id).then(res=>{
+            if(res.data.code === 1){
+              this.${ClassName}Info = res.data.data
+              this.updateVisible = true
+            }
+        })
+    },
+    onDelete(record){
+      this.$axios.delete('/${ClassName?lower_case}/api/delete?id='+record.id).then(res=>{
+        if(res.data.code === 1){
+          message.success('删除成功')
+          this.handleSearch()
+        }
+      })
+    },
+    submitUpdateRequest(){
+      const ${ClassName?lower_case}Info = this.$refs.updateRef.${ClassName}model
+      this.$axios.post('/${ClassName?lower_case}/api/update',${ClassName?lower_case}Info).then(res=>{
+        if(res.data.code === 1){
+          message.success('更新成功')
+          this.updateVisible = false
+          this.handleSearch()
+        }
+      })
+    },
+    onSelectChange() {},
+    toggle() {
+      this.expand = !this.expand;
+    },
+  }
+}
+</script>
+
+<style lang="less" scoped>
+.button-wrap {
+  .list-table {
+    margin-top: 10px;
+  }
+  button {
+    margin-right: 10px;
+  }
+  .circle {
+    border-radius: 50% !important;
+  }
+}
+</style>

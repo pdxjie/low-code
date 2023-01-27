@@ -65,7 +65,7 @@ public class GeneratorCore {
         Template template = configuration.getTemplate(templateFileName);
         template.setOutputEncoding("UTF-8");
         //创建文件
-        File mkdir = FileUtils.mkdir(outPath, outFileName.replace("ftl","java"));
+        File mkdir = FileUtils.mkdir(outPath, outFileName.replace("ftl","java").replace("vuei","vue"));
         //模板处理
         FileWriter writer = new FileWriter(mkdir);
         template.process(dataMap,writer);

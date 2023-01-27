@@ -1,0 +1,29 @@
+<template>
+  <a-card >
+    <a-row :gutter="10">
+    </a-row>
+  </a-card>
+</template>
+
+<script>
+import LineCharts from '@/views/Home/Observe/Search/LineCharts'
+export default {
+  name: 'Search',
+  components: { LineCharts },
+  data() {
+    return {
+      tableData: [{}]
+    }
+  }
+}
+</script>
+
+<style scoped>
+.header {
+  border-bottom: 1px solid #eee;
+  padding: 5px 0;
+}
+.pagination {
+  float: right;
+}
+</style>

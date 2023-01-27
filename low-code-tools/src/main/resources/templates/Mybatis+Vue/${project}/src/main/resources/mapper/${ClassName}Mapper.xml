@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${path1}.${path2}.${path3}.mapper.${ClassName}Mapper">
+
+
+    <resultMap id="BaseResultMap" type="${path1}.${path2}.${path3}.entity.${ClassName}" >
+<#if table.columns?exists && table.columns?size gt 0>
+    <#list table.columns as fieldItem >
+        <result column="${fieldItem.columnName}" jdbcType="${fieldItem.columnDbType}" property="${fieldItem.columnName2}" />
+    </#list>
+</#if>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+<#if table.columns?exists && table.columns?size gt 0>
+    <#list table.columns as fieldItem >
+        `${fieldItem.columnName}`<#if fieldItem_has_next>,</#if>
+    </#list>
+</#if>
+    </sql>
+
+    <!-- 插入数据 -->
+    <insert id="insert" parameterType="${path1}.${path2}.${path3}.entity.${ClassName}">
+        INSERT INTO ${table.name}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+<#if table.columns?exists && table.columns?size gt 0>
+    <#list table.columns as fieldItem >
+        <#if fieldItem.columnName != "id_" >
+            ${r"<if test ='null != "}${fieldItem.columnName2}${r"'>"}
+            `${fieldItem.columnName}`<#if fieldItem_has_next>,</#if>
+            ${r"</if>"}
+        </#if>
+    </#list>
+</#if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+    <#if table.columns?exists && table.columns?size gt 0>
+        <#list table.columns as fieldItem >
+            ${r"<if test ='null != "}${fieldItem.columnName2}${r"'>"}
+            ${r"#{"}${fieldItem.columnName2}${r"}"}<#if fieldItem_has_next>,</#if>
+            ${r"</if>"}
+        </#list>
+    </#if>
+        </trim>
+    </insert>
+
+    <!-- 批量插入数据 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO ${table.name} ( <include refid="Base_Column_List" /> ) VALUES
+        <foreach collection="list" item="curr" index="index" separator=",">
+            (
+            <#list table.columns as fieldItem >
+                ${r"#{"}curr.${fieldItem.columnName2}${r"}"}<#if fieldItem_has_next>,</#if>
+            </#list>
+            )
+        </foreach>
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="${path1}.${path2}.${path3}.entity.${ClassName}">
+        UPDATE ${table.name}
+        <set>
+        <#if table.columns?exists && table.columns?size gt 0>
+            <#list table.columns as fieldItem >
+                <#if !fieldItem.columnKey??>
+            ${r"<if test ='null != "}${fieldItem.columnName2}${r"'>"}
+                `${fieldItem.columnName}` = ${r"#{"}${fieldItem.columnName2}${r"}"}<#if fieldItem_has_next>,
+            </#if>${r"</if>"}
+                </#if>
+            </#list>
+        </#if>
+        </set>
+        WHERE <#list table.columns as fieldItem >
+            <#if fieldItem.columnKey??>
+                `${fieldItem.columnName}` = ${r"#{"}${fieldItem.columnName2}${r"}"}
+            </#if>
+        </#list>
+    </update>
+
+    <!-- 删除 -->
+    <delete id="delete">
+        DELETE FROM ${table.name}
+        WHERE <#list table.columns as fieldItem >
+            <#if fieldItem.columnKey??>
+                `${fieldItem.columnName}` = ${r"#{"}key${r"}"}
+            </#if>
+        </#list>
+    </delete>
+
+    <!-- 批量删除 -->
+    <delete id="batchDelete" parameterType = "java.util.List">
+        DELETE FROM ${table.name} WHERE
+<#list table.columns as fieldItem >
+    <#if fieldItem.columnKey??>
+        `${fieldItem.columnName}` IN
+        <foreach collection="list" item="item" open="(" separator="," close=")"  >
+            ${r"#{"}item${r"}"}
+        </foreach>
+    </#if>
+</#list>
+    </delete>
+
+    <!-- 主键查询 -->
+    <select id="selectByKey" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM ${table.name}
+        WHERE <#list table.columns as fieldItem >
+            <#if fieldItem.columnKey??>
+                `${fieldItem.columnName}` = ${r"#{"}key${r"}"}
+            </#if>
+        </#list>
+    </select>
+
+    <!-- 条件查询 -->
+    <select id="selectList" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM ${table.name}
+        <where>
+    <#if table.columns?exists && table.columns?size gt 0>
+        <#list table.columns as fieldItem >
+            ${r"<if test ='null != "}${fieldItem.columnName2}${r"'>"}
+            and `${fieldItem.columnName}` = ${r"#{"}${fieldItem.columnName2}${r"}"}
+            ${r"</if>"}
+        </#list>
+    </#if>
+        </where>
+    </select>
+
+    <!-- 分页条件查询 -->
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM ${table.name}
+        <where>
+    <#if table.columns?exists && table.columns?size gt 0>
+        <#list table.columns as fieldItem>
+            ${r"<if test ='null != "}${ClassName?lower_case}.${fieldItem.columnName2}${r"'>"}
+                and `${fieldItem.columnName}` = ${r"#{"}${ClassName?lower_case}.${fieldItem.columnName2}${r"}"}
+            ${r"</if>"}
+        </#list>
+    </#if>
+        </where>
+        limit ${r"#{"}page,jdbcType=INTEGER${r"}"}, ${r"#{"}pageSize,jdbcType=INTEGER${r"}"}
+    </select>
+
+    <!-- 总量查询 -->
+    <select id="total" resultType="java.lang.Integer">
+        SELECT count(*) FROM ${table.name}
+        <where>
+<#if table.columns?exists && table.columns?size gt 0>
+    <#list table.columns as fieldItem>
+        ${r"<if test ='null != "}${fieldItem.columnName2}${r"'>"}
+        and `${fieldItem.columnName}` = ${r"#{"}${fieldItem.columnName2}${r"}"}
+        ${r"</if>"}
+    </#list>
+</#if>
+        </where>
+    </select>
+</mapper>

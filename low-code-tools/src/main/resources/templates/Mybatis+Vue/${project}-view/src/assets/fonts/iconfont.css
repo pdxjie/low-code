@@ -1,0 +1,79 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3837467 */
+  src: url('iconfont.woff2?t=1672230214151') format('woff2'),
+       url('iconfont.woff?t=1672230214151') format('woff'),
+       url('iconfont.ttf?t=1672230214151') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-wxbsousuotuiguang:before {
+  content: "\e620";
+}
+
+.icon-fangxiangbiao:before {
+  content: "\e60b";
+}
+
+.icon-tuichuquanping:before {
+  content: "\e637";
+}
+
+.icon-quanping:before {
+  content: "\eb11";
+}
+
+.icon-zhuti:before {
+  content: "\e653";
+}
+
+.icon-fanyi:before {
+  content: "\e6ba";
+}
+
+.icon-GitHub:before {
+  content: "\ea0a";
+}
+
+.icon-zhifubao:before {
+  content: "\e636";
+}
+
+.icon-wechat:before {
+  content: "\e623";
+}
+
+.icon-shejiaotubiao-44:before {
+  content: "\e648";
+}
+
+.icon-gouwuchekong:before {
+  content: "\e600";
+}
+
+.icon-aixin:before {
+  content: "\e8ab";
+}
+
+.icon-bianji:before {
+  content: "\e8ac";
+}
+
+.icon-Dyanjing:before {
+  content: "\e8ad";
+}
+
+.icon-caidan:before {
+  content: "\e8ae";
+}
+
+.icon-ic_search24px:before {
+  content: "\e616";
+}
+

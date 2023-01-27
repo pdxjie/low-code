@@ -1,0 +1,22 @@
+<template>
+  <div>
+    <a-row :gutter="10">
+      <a-col :span="24">
+        <Category />
+      </a-col>
+    </a-row>
+  </div>
+</template>
+
+<script>
+import Search from '@/views/Home/Observe/Search'
+import Category from '@/views/Home/Observe/Category'
+export default {
+  name: 'Observe',
+  components: { Category, Search }
+}
+</script>
+
+<style scoped>
+
+</style>

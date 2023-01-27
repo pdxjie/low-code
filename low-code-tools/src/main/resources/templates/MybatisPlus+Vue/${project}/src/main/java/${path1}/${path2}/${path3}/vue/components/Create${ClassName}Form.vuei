@@ -1,0 +1,45 @@
+<template>
+  <div>
+    <a-form layout="horizontal" :form="${ClassName}model">
+        <#list table.columns as po>
+
+          <a-form-item label="${po.columnComment}"
+                       :label-col="formItemLayout.labelCol"
+                       :wrapper-col="formItemLayout.wrapperCol"
+          >
+            <#if po.columnType == 'java.util.Date'>
+              <a-date-picker v-model="${ClassName}model.${po.columnName2}"/>
+              <#elseif "int,decimal,double,Integer,"?contains(po.columnType)>
+              <a-input-number v-model="${ClassName}model.${po.columnName2}"/>
+              <#else>
+              <a-input placeholder="请输入${po.columnComment}" v-model="${ClassName}model.${po.columnName2}"/>
+            </#if>
+          </a-form-item>
+        </#list>
+    </a-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Create${ClassName}Form',
+  data () {
+    return {
+      formItemLayout: {
+        labelCol: { span: 5 },
+        wrapperCol: { span: 10 }
+      },
+      ${ClassName}model:{}
+    }
+  }
+}
+</script>
+
+<style scoped>
+  ::v-deep .ant-input-number {
+    width: 100% !important;
+  }
+  ::v-deep .ant-calendar-picker {
+    width: 100% !important;
+  }
+</style>

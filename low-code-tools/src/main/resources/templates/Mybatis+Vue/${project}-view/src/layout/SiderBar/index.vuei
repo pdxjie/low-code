@@ -1,0 +1,75 @@
+<template>
+  <div class="sider-bar">
+    <a-layout-sider :trigger="null" :style="{ overflow:'auto',height: '100vh', left: 0 }" v-model="collapsed" collapsible>
+      <div class="logo">
+        <img :src="logo" alt="" :class="collapsed? 'logo-bike':''">
+        <h1 v-show="!collapsed">${project}</h1>
+      </div>
+      <a-menu theme="dark" :default-selected-keys="['1']" mode="inline">
+        <template v-for="(menu) in menus">
+          <a-menu-item v-if="!menu.children" :key="menu.path" @click="()=>$router.push({path:menu.path})">
+            <a-icon :type="menu.meta.icon"/>
+            <span>{{menu.meta.title}}</span>
+          </a-menu-item>
+          <sub-menu-item v-else :key="menu.path" :menuInfo="menu"/>
+        </template>
+      </a-menu>
+    </a-layout-sider>
+  </div>
+</template>
+
+<script>
+import SubMenuItem from '@/layout/SubMenuItem'
+export default {
+  name: 'SiderBar',
+  components: { SubMenuItem },
+  mounted () {
+    this.$store.commit('system/SET_MENUS')
+  },
+  data () {
+    return {
+      logo: require('@/assets/bike.svg')
+    }
+  },
+  computed: {
+    collapsed () {
+      return this.$store.getters.collapsed
+    },
+    menus () {
+      return this.$store.getters.menus
+    }
+  }
+}
+</script>
+
+<style lang="less" scoped>
+.logo {
+  position: relative;
+  height: 60px;
+  .logo-bike {
+    position: absolute;
+    height: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+  img {
+    position: absolute;
+    height: 30px;
+    top: 50%;
+    left: 20%;
+    transform: translate(-50%,-50%);
+  }
+  h1 {
+    position: absolute;
+    color: #FFF;
+    margin-left: 10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+}
+.sider-bar {
+  background-color: #001529;
+}
+</style>

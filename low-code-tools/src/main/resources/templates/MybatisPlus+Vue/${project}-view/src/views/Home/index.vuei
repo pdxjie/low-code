@@ -1,0 +1,30 @@
+<template>
+  <div>
+    <Card />
+    <Sale />
+    <Observe />
+  </div>
+</template>
+
+<script>
+import Card from '@/views/Home/Card'
+import Sale from '@/views/Home/Sale'
+import Observe from '@/views/Home/Observe'
+
+export default {
+  name: 'Home',
+  components: { Observe, Sale, Card },
+}
+</script>
+
+<style lang="less" scoped>
+.dashboard {
+  &-container {
+    margin: 30px;
+  }
+  &-text {
+    font-size: 30px;
+    line-height: 46px;
+  }
+}
+</style>
